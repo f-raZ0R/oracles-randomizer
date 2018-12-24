@@ -302,7 +302,7 @@ func rollSeasons(src *rand.Rand, r *Route) map[string]byte {
 		}
 
 		// roll new default season
-		id := src.Intn(len(seasonsByID))
+		id := 3 // all winter!
 		season := seasonsByID[id]
 		r.AddParent(fmt.Sprintf("%s default %s", area, season), "start")
 		seasonMap[area] = byte(id)
