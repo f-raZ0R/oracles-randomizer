@@ -8,6 +8,7 @@ import (
 	"sort"
 	"strconv"
 	"strings"
+	"encoding/hex"
 
 	"gopkg.in/yaml.v2"
 )
@@ -17,6 +18,7 @@ type asmData struct {
 	filename string
 	Common   yaml.MapSlice
 	Floating yaml.MapSlice
+	Text     yaml.MapSlice
 	Seasons  yaml.MapSlice
 	Ages     yaml.MapSlice
 }
@@ -146,7 +148,7 @@ func (rom *romState) applyAsmData(asmFiles []*asmData) {
 		}
 	}
 
-	// include free code
+	// include free code and text
 	freeCode := make(map[string]string)
 	for _, asmFile := range asmFiles {
 		for _, item := range asmFile.Floating {
@@ -154,12 +156,23 @@ func (rom *romState) applyAsmData(asmFiles []*asmData) {
 			freeCode[k] = v
 		}
 	}
+	freeText := make(map[string]string)
+	for _, asmFile := range asmFiles {
+		for _, item := range asmFile.Text {
+			k, v := item.Key.(string), item.Value.(string)
+			freeText[k] = processTextToAsm(v)
+		}
+	}
 	for _, slice := range slices {
 		for name, item := range slice {
 			v := item.Value.(string)
 			if strings.HasPrefix(v, "/include") {
 				funcName := strings.Split(v, " ")[1]
-				slice[name].Value = freeCode[funcName]
+				if freeCode[funcName] != "" {
+					slice[name].Value = freeCode[funcName]
+				} else {
+					slice[name].Value = freeText[funcName]
+				}
 			}
 		}
 	}
@@ -333,7 +346,23 @@ func (rom *romState) attachText() {
 	}
 }
 
-var hashCommentRegexp = regexp.MustCompile(" #.+?\n")
+var hashCommentRegexp = regexp.MustCompile("( *#.*)?\n")
+
+// same as processText but result is asm using "db"
+func processTextToAsm(s string) string {
+	data := processText(s)
+	str := "db "
+	first := true
+
+	for _,b := range data {
+		if first == false {
+			str = str + ","
+		}
+		first = false
+		str = str + hex.EncodeToString([]byte{b})
+	}
+	return str
+}
 
 // processes a raw text string as a go string literal, converting escape
 // sequences to their actual values. "comments" and literal newlines are

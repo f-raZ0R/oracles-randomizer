@@ -163,6 +163,7 @@ seasons:
     define wEssencesObtained,c6bb
     define wActiveRing,c6c5
     define wRingBoxLevel,c6c6
+    define wTextSubstitutions,cbaf
     define wRememberedCompanionRoom,cc42
     define wRememberedCompanionY,cc43
     define wActiveGroup,cc49
@@ -268,6 +269,7 @@ ages:
     define wRingBoxLevel,c6cc
     define wMakuTreeState,c6e8
     define wJabuWaterLevel,c6e9
+    define wTextSubstitutions,cbaf
     define wStatusBarNeedsRefresh,cbe9
     define wActiveGroup,cc2d
     define wActiveRoom,cc30
