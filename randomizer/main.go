@@ -569,7 +569,7 @@ func randomize(rom *romState, dirName, logFilename string,
 
 	// configuration found; come up with auxiliary data
 	checks := getChecks(ri.usedItems, ri.usedSlots)
-	spheres, extra := getSpheres(ri.graph, checks)
+	spheres, extra := getSpheres(ri.graph, checks, ropts.keysanity)
 	/*
 		owlNames := orderedKeys(getOwlIds(rom.game))
 		owlHinter := newHinter(rom.game)

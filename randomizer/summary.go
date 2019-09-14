@@ -35,13 +35,13 @@ func getSummaryChannel(filename string) (chan string, chan int) {
 
 // separates a map of checks into progression checks and junk checks.
 func filterJunk(g graph, checks map[*node]*node,
-	treasures map[string]*treasure) (prog, junk map[*node]*node) {
+	treasures map[string]*treasure, keysanity bool) (prog, junk map[*node]*node) {
 	prog, junk = make(map[*node]*node), make(map[*node]*node)
 
 	// get all required items. if multiple instances of the same class exist
 	// and any is skippable but some are required, the first instances are
 	// considered required and the rest are considered unrequired.
-	spheres, _ := getSpheres(g, checks)
+	spheres, _ := getSpheres(g, checks, keysanity)
 	for _, class := range getAllItemClasses(checks) {
 		// skip known inert items
 		if class != "rupees" && itemIsInert(treasures, class) {
@@ -166,16 +166,20 @@ func writeSummary(path string, checksum []byte, ropts randomizerOptions,
 
 	// items
 	sendSectionHeader(summary, "progression items")
-	nonKeyChecks := make(map[*node]*node)
+	progChecks := make(map[*node]*node)
 	for slot, item := range checks {
-		if !keyRegexp.MatchString(item.name) {
-			nonKeyChecks[slot] = item
+		if ropts.keysanity || !keyRegexp.MatchString(item.name) {
+			progChecks[slot] = item
 		}
 	}
-	prog, junk := filterJunk(ri.graph, nonKeyChecks, rom.treasures)
+	prog, junk := filterJunk(ri.graph, progChecks, rom.treasures, ropts.keysanity)
 	logSpheres(summary, prog, spheres, extra, rom.game, nil)
-	sendSectionHeader(summary, "small keys and boss keys")
-	logSpheres(summary, checks, spheres, extra, rom.game, keyRegexp.MatchString)
+
+	if !ropts.keysanity {
+		sendSectionHeader(summary, "small keys and boss keys")
+		logSpheres(summary, checks, spheres, extra, rom.game, keyRegexp.MatchString)
+	}
+
 	sendSectionHeader(summary, "other items")
 	logSpheres(summary, junk, spheres, extra, rom.game, nil)
 
