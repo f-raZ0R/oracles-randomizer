@@ -114,9 +114,12 @@ func makeRoomTreasureTable(game int, itemSlots map[string]*itemSlot) string {
 		var err error
 		if slot.treasure == nil {
 			_, err = b.Write([]byte{slot.group, slot.room, 0x00, 0x00})
+			/*
 		} else if slot.treasure.id == 0x30 {
 			// make small keys the normal falling variety, with no text box.
+			// (TODO: re-enable when keysanity is disabled?)
 			_, err = b.Write([]byte{slot.group, slot.room, 0x30, 0x01})
+			*/
 		} else {
 			_, err = b.Write([]byte{slot.group, slot.room,
 				slot.treasure.id, slot.treasure.subid})
