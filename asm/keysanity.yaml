@@ -1,12 +1,24 @@
 common:
-  # Use "param" instead of "wDungeonIndex" for determining which dungeon's keys
-  # to increment, and set up text substitution.
-  3f/setDungeonTextSubstitution: |
-    ld a,c
-    add a,98
-    ld (wTextSubstitutions),a
-    ld a,c
-    ret
+    # Use "param" instead of "wDungeonIndex" for determining which dungeon's keys
+    # to increment, and set up text substitution.
+    3f/setDungeonTextSubstitution: |
+        ld a,c
+        add a,98
+        ld (wTextSubstitutions),a
+        ld a,c
+        ret
+
+    01/checkCompassChimes: |
+        ld a,(wActiveGroup)
+        ld b,a
+        ld a,(wActiveRoom)
+        ld c,a
+        ld e,01
+        ld hl,compassChimeTable
+        call searchDoubleKey
+        ret nc
+        ld a,(hl)
+        ret
 
 seasons:
     15/51ea/: dw smallKeyTreasureData
@@ -60,8 +72,13 @@ seasons:
         db 68,07,93,40
         db 68,08,93,40
 
+    # getting small keys and boss keys
     3f/4584/: call setDungeonTextSubstitution
     3f/459d/: call setDungeonTextSubstitution
+
+    # compass chimes
+    01/49ea/: call checkCompassChimes; ret nc; nop; nop
+    01/4a0b/: nop; nop; nop; nop; nop; nop; nop; nop; nop; nop; nop; nop;
 
 ages:
     16/53f3/: dw smallKeyTreasureData
@@ -129,5 +146,10 @@ ages:
         db 00,00,00,00
         db 38,0c,93,40
 
+    # getting small keys and boss keys
     3f/457e/: call setDungeonTextSubstitution
     3f/4597/: call setDungeonTextSubstitution
+
+    # compass chimes
+    01/4a5d/: call checkCompassChimes; ret nc; nop; nop
+    01/4a70/: nop; nop; nop; nop; nop; nop; nop; nop; nop; nop; nop; nop;

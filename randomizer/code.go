@@ -137,6 +137,41 @@ func makeRoomTreasureTable(game int, itemSlots map[string]*itemSlot) string {
 	return b.String()
 }
 
+// returns a byte table (group, room, dungeon) for where compass chimes should play.
+// (TODO: how to handle rooms with multiple items in them?)
+// FIXME: Plandos break BADLY when any keys are added or removed, because the
+// size of this table is based on the initial item slots and assumed to not
+// change.
+func makeCompassChimeTable(game int, itemSlots map[string]*itemSlot) string {
+	b := new(strings.Builder)
+	count := 0
+
+	for _, key := range orderedKeys(itemSlots) {
+		slot := itemSlots[key]
+
+		var err error
+		if slot.treasure == nil {
+			_, err = b.Write([]byte{slot.group, slot.room, 0x00})
+		count += 1
+			continue
+		} else if !(slot.treasure.id == 0x30 || slot.treasure.id == 0x31) {
+			continue
+		}
+
+		//println(slot.treasure.displayName)
+		count += 1
+		_, err = b.Write([]byte{slot.group, slot.room, slot.treasure.subid})
+		if err != nil {
+			panic(err)
+		}
+	}
+
+	//println("Count: " + strconv.Itoa(count))
+
+	b.Write([]byte{0xff})
+	return b.String()
+}
+
 // that's correct
 type eobThing struct {
 	addr         address
@@ -441,6 +476,8 @@ func (rom *romState) initBanks() {
 		makeCollectModeTable(rom.itemSlots))
 	rom.replaceRaw(address{roomTreasureBank, 0}, "roomTreasures",
 		makeRoomTreasureTable(rom.game, rom.itemSlots))
+	rom.replaceRaw(address{0x01, 0}, "compassChimeTable",
+		makeCompassChimeTable(rom.game, rom.itemSlots))
 	rom.replaceRaw(address{0x3f, 0}, "owlTextOffsets",
 		string(make([]byte, numOwlIds*2)))
 
