@@ -173,22 +173,29 @@ func (rom *romState) mutate(warpMap map[string]string, seed uint32,
 		rom.itemSlots["great furnace"].mutate(rom.data)
 		rom.itemSlots["master diver's reward"].mutate(rom.data)
 
+		/*
 		// annoying special case to prevent text on key drop
+		// (TODO: re-enable this when keysanity is disabled? Mind the subid may
+		// need to change)
 		mut := rom.itemSlots["d7 armos puzzle"]
 		if mut.treasure.id == rom.treasures["d7 small key"].id {
 			rom.data[mut.subidAddrs[0].fullOffset()] = 0x01
 		}
+		*/
 	} else {
 		rom.itemSlots["nayru's house"].mutate(rom.data)
 		rom.itemSlots["deku forest soldier"].mutate(rom.data)
 		rom.itemSlots["target carts 2"].mutate(rom.data)
 		rom.itemSlots["hidden tokay cave"].mutate(rom.data)
 
+		/*
 		// other special case to prevent text on key drop
+		// (TODO: see above)
 		mut := rom.itemSlots["d8 stalfos"]
 		if mut.treasure.id == rom.treasures["d8 small key"].id {
 			rom.data[mut.subidAddrs[0].fullOffset()] = 0x00
 		}
+		*/
 	}
 
 	rom.setCompassData()
@@ -521,6 +528,7 @@ func (rom *romState) setLinkedData() {
 	if rom.game == gameSeasons {
 		// set linked starting / hero's cave terrace items based on which items
 		// in unlinked hero's cave aren't keys. order matters.
+		// FIXME: Doesn't work with keysanity!
 		var tStart, tCave *treasure
 		if rom.itemSlots["d0 key chest"].treasure.id == 0x30 {
 			tStart = rom.itemSlots["d0 sword chest"].treasure
