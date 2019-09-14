@@ -368,6 +368,7 @@ func (rom *romState) setCompassData() {
 	for _, prefix := range prefixes {
 		for name, slot := range rom.itemSlots {
 			if strings.HasPrefix(name, prefix+" ") {
+				// safe to assume this is in a dungeon
 				offset := getDungeonPropertiesAddr(
 					rom.game, slot.group, slot.room).fullOffset()
 				rom.data[offset] = rom.data[offset] & 0xed // reset bit 4
@@ -395,6 +396,9 @@ func (rom *romState) setCompassData() {
 		}
 
 		for _, slot := range slots {
+			if slot.group < 4 { // no compass chimes outside dungeons
+				continue
+			}
 			offset := getDungeonPropertiesAddr(
 				rom.game, slot.group, slot.room).fullOffset()
 			rom.data[offset] = (rom.data[offset] & 0xbf) | 0x10 // set bit 4, reset bit 6
