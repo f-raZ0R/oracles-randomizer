@@ -143,7 +143,7 @@ func findRoute(rom *romState, seed uint32, ropts randomizerOptions,
 			ri.src, ri.graph, rom.game, ropts.dungeons)
 
 		if tryPlaceItems(
-			ri, itemList, slotList, rom.treasures, rom.game, verbose, logf) {
+			ri, itemList, slotList, rom.treasures, rom.game, verbose, logf, ropts) {
 			ri.graph.reset()
 			ri.graph["start"].explore()
 			if ri.graph["done"].reached {
@@ -375,7 +375,8 @@ func initRouteInfo(
 
 // returns true iff successful
 func tryPlaceItems(ri *routeInfo, itemList, slotList *list.List,
-	treasures map[string]*treasure, game int, verbose bool, logf logFunc) bool {
+	treasures map[string]*treasure, game int, verbose bool, logf logFunc,
+	ropts randomizerOptions) bool {
 	for itemList.Len() > 0 && slotList.Len() > 0 {
 		if verbose {
 			logf("searching; filling %d more slots", slotList.Len())
@@ -383,7 +384,7 @@ func tryPlaceItems(ri *routeInfo, itemList, slotList *list.List,
 		}
 
 		eItem, eSlot := trySlotRandomItem(
-			ri.graph, ri.src, itemList, slotList, treasures, game)
+			ri.graph, ri.src, itemList, slotList, treasures, game, ropts)
 
 		if eItem != nil {
 			item := itemList.Remove(eItem).(*node)
@@ -411,7 +412,8 @@ func tryPlaceItems(ri *routeInfo, itemList, slotList *list.List,
 }
 
 func trySlotRandomItem(g graph, src *rand.Rand, itemPool, slotPool *list.List,
-	treasures map[string]*treasure, game int) (usedItem, usedSlot *list.Element) {
+	treasures map[string]*treasure, game int,
+	ropts randomizerOptions) (usedItem, usedSlot *list.Element) {
 	// try placing the first item in a slot until it fits
 	triedProgression := false
 	for _, progressionItemsOnly := range []bool{true, false} {
@@ -431,7 +433,7 @@ func trySlotRandomItem(g graph, src *rand.Rand, itemPool, slotPool *list.List,
 			for es := slotPool.Front(); es != nil; es = es.Next() {
 				slot := es.Value.(*node)
 
-				if !itemFitsInSlot(item, slot) {
+				if !itemFitsInSlot(item, slot, ropts) {
 					continue
 				}
 
@@ -468,7 +470,7 @@ func trySlotRandomItem(g graph, src *rand.Rand, itemPool, slotPool *list.List,
 // checks whether the item fits in the slot due to things like seeds only going
 // in trees, certain item slots not accomodating sub IDs. this doesn't check
 // for softlocks or the availability of the slot and item.
-func itemFitsInSlot(itemNode, slotNode *node) bool {
+func itemFitsInSlot(itemNode, slotNode *node, ropts randomizerOptions) bool {
 	// dummy shop slots 1 and 2 can only hold their vanilla items.
 	switch {
 	case slotNode.name == "shop, 20 rupees" && itemNode.name != "bombs, 10":
@@ -490,16 +492,15 @@ func itemFitsInSlot(itemNode, slotNode *node) bool {
 		}
 	}
 
-	// dungeons can only hold their respective dungeon-specific items. the
-	// HasPrefix is specifically for ages d6 boss key.
-	// (TODO: enable when keysanity is disabled)
-	/*
-	dungeonName := getDungeonName(itemNode.name)
-	if dungeonName != "" &&
+	if !ropts.keysanity {
+		// dungeons can only hold their respective dungeon-specific items. the
+		// HasPrefix is specifically for ages d6 boss key.
+		dungeonName := getDungeonName(itemNode.name)
+		if dungeonName != "" &&
 		!strings.HasPrefix(getDungeonName(slotNode.name), dungeonName) {
-		return false
+		  return false
+		}
 	}
-	*/
 
 	// and only seeds can be slotted in seed trees, of course
 	switch itemNode.name {

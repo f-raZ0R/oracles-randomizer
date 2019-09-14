@@ -54,27 +54,29 @@ func printErrf(s string, a ...interface{}) {
 
 // options specified on the command line or via the TUI
 var (
-	flagCpuProf  string
-	flagDevCmd   string
-	flagDungeons bool
-	flagHard     bool
-	flagNoUI     bool
-	flagPlan     string
-	flagPortals  bool
-	flagSeed     string
-	flagRace     bool
-	flagTreewarp bool
-	flagVerbose  bool
+	flagCpuProf   string
+	flagDevCmd    string
+	flagDungeons  bool
+	flagHard      bool
+	flagKeysanity bool
+	flagNoUI      bool
+	flagPlan      string
+	flagPortals   bool
+	flagSeed      string
+	flagRace      bool
+	flagTreewarp  bool
+	flagVerbose   bool
 )
 
 type randomizerOptions struct {
-	treewarp bool
-	hard     bool
-	dungeons bool
-	portals  bool
-	plan     *plan
-	race     bool
-	seed     string
+	treewarp  bool
+	hard      bool
+	dungeons  bool
+	portals   bool
+	keysanity bool
+	plan      *plan
+	race      bool
+	seed      string
 }
 
 // initFlags initializes the CLI/TUI option values and variables.
@@ -88,6 +90,8 @@ func initFlags() {
 		"shuffle dungeon entrances")
 	flag.BoolVar(&flagHard, "hard", false,
 		"enable more difficult logic")
+	flag.BoolVar(&flagKeysanity, "keysanity", false,
+		"shuffle dungeon keys, maps, and compasses outside their dungeons")
 	flag.BoolVar(&flagNoUI, "noui", false,
 		"use command line without prompts if input file is given")
 	flag.StringVar(&flagPlan, "plan", "",
@@ -124,6 +128,7 @@ func Main() {
 		hard:     flagHard,
 		dungeons: flagDungeons,
 		portals:  flagPortals,
+		keysanity:flagKeysanity,
 		race:     flagRace,
 		seed:     flagSeed,
 	}
@@ -350,6 +355,11 @@ func getAndLogOptions(game int, ui *uiInstance, ropts *randomizerOptions,
 		}
 		logf("portal shuffle %s.", ternary(ropts.portals, "on", "off"))
 	}
+
+	if ui != nil {
+		ropts.keysanity = ui.doPrompt("enable keysanity? (y/n)") == 'y'
+	}
+	logf("keysanity %s.", ternary(ropts.keysanity, "on", "off"))
 }
 
 // attempt to write rom data to a file and print summary info.
@@ -545,7 +555,7 @@ func randomize(rom *romState, dirName, logFilename string,
 	} else {
 		logf("applying plan...")
 		var err error
-		ri, err = makePlannedRoute(rom, ropts.plan)
+		ri, err = makePlannedRoute(rom, ropts.plan, ropts)
 		if err != nil {
 			return 0, nil, "", err
 		}
