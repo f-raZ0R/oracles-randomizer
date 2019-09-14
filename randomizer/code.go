@@ -346,7 +346,7 @@ func (rom *romState) attachText() {
 	}
 }
 
-var hashCommentRegexp = regexp.MustCompile("( *#.*)?\n")
+var hashCommentRegexp = regexp.MustCompile("( #.*)?\n")
 
 // same as processText but result is asm using "db"
 func processTextToAsm(s string) string {

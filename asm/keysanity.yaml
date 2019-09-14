@@ -1,7 +1,7 @@
 common:
   # Use "param" instead of "wDungeonIndex" for # determining which dungeon's
   # keys to increment, and set up text substitution.
-  3f/setDungeonKeyTextSubstitution: |
+  3f/setDungeonTextSubstitution: |
     ld a,c
     add a,98
     ld (wTextSubstitutions),a
@@ -9,9 +9,12 @@ common:
     ret
 
 seasons:
-  15/51ea/: dw smallKeyTreasureData
+    15/51ea/: dw smallKeyTreasureData
+    15/51ee/: dw bossKeyTreasureData
+    15/51f2/: dw compassTreasureData
+    15/51f6/: dw mapTreasureData
 
-  15/smallKeyTreasureData: |
+    15/smallKeyTreasureData: |
         db 38,00,90,42
         db 38,01,90,42
         db 38,02,90,42
@@ -22,11 +25,46 @@ seasons:
         db 38,07,90,42
         db 38,08,90,42
 
-  # Upon obtaining a small key, use "param" instead of "wDungeonIndex" for
-  # which dungeon it is.
-  3f/459d/: call setDungeonKeyTextSubstitution
+    15/bossKeyTreasureData: |
+        db 38,00,91,43
+        db 38,01,91,43
+        db 38,02,91,43
+        db 38,03,91,43
+        db 38,04,91,43
+        db 38,05,91,43
+        db 38,06,91,43
+        db 38,07,91,43
+        db 38,08,91,43
+
+    15/compassTreasureData: |
+        db 68,00,92,41
+        db 68,01,92,41
+        db 68,02,92,41
+        db 68,03,92,41
+        db 68,04,92,41
+        db 68,05,92,41
+        db 68,06,92,41
+        db 68,07,92,41
+        db 68,08,92,41
+
+    15/mapTreasureData: |
+        db 68,00,93,40
+        db 68,01,93,40
+        db 68,02,93,40
+        db 68,03,93,40
+        db 68,04,93,40
+        db 68,05,93,40
+        db 68,06,93,40
+        db 68,07,93,40
+        db 68,08,93,40
+
+    # Upon obtaining a small key, use "param" instead of "wDungeonIndex" for
+    # which dungeon it is.
+    3f/4584/: call setDungeonTextSubstitution
+    3f/459d/: call setDungeonTextSubstitution
 
 ages:
-  # Upon obtaining a small key, use "param" instead of "wDungeonIndex" for
-  # which dungeon it is.
-  3f/4597/: call setDungeonKeyTextSubstitution
+    # Upon obtaining a small key, map, compass, or boss key, use "param" instead
+    # of "wDungeonIndex" for which dungeon it is, and set up text substitution.
+    3f/457e/: call setDungeonTextSubstitution
+    3f/4597/: call setDungeonTextSubstitution

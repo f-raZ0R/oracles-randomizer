@@ -7,38 +7,38 @@ text:
     \x0f\xff!\x00
   bossKeyText: |
     You got the\x01
-    boss key of
+    boss key of\x01
     \x0f\xff!\x00
   compassText: |
     You got the\x01
-    compass of
+    compass of\x01
     \x0f\xff!\x00
   mapText: |
     You got the\x01
-    dungeon map of
+    dungeon map of\x01
     \x0f\xff!\x00
 
-  d0Text:
+  d0Text: |
     Hero's Cave\x00
-  d1Text:
+  d1Text: |
     Gnarled Root\x01
     Dungeon\x00
-  d2Text:
+  d2Text: |
     Snake's Remains\x00
-  d3Text:
+  d3Text: |
     Poison Moth's\x01
     Lair\x00
-  d4Text:
+  d4Text: |
     Dancing Dragon\x01
     Dungeon\x00
-  d5Text:
+  d5Text: |
     Unicorn's Cave\x00
-  d6Text:
+  d6Text: |
     Ancient Ruins\x00
-  d7Text:
+  d7Text: |
     Explorer's\x01
     Crypt\x00
-  d8Text:
+  d8Text: |
     Sword & Shield\x01
     Maze\x00
 
@@ -100,7 +100,7 @@ common:
   3f/smallKeyText: /include smallKeyText
   3f/bossKeyText: /include bossKeyText
   3f/compassText: /include compassText
-  3f/mapText: /include mapKeyText
+  3f/mapText: /include mapText
   3f/d0Text: /include d0Text
   3f/d1Text: /include d1Text
   3f/d2Text: /include d2Text
