@@ -182,8 +182,8 @@ func (rom *romState) loadSlots() map[string]*itemSlot {
 			} else {
 				// Small keys, boss keys, compasses, and maps have their default
 				// collect mode hardcoded, since their subids are used as the
-				// dungeon index, and patches from asm/text.yaml aren't visible
-				// yet
+				// dungeon index, and patches from asm/keysanity.yaml aren't
+				// visible yet
 				if slot.treasure.id >= 0x30 && slot.treasure.id <= 0x31 {
 					slot.collectMode = collectModes["chest"]
 				} else if slot.treasure.id >= 0x32 && slot.treasure.id <= 0x33 {
