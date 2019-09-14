@@ -180,7 +180,15 @@ func (rom *romState) loadSlots() map[string]*itemSlot {
 					panic("collect mode not found: " + raw.Collect)
 				}
 			} else {
-				if t, ok := rom.treasures[raw.Treasure]; ok {
+				// Small keys, boss keys, compasses, and maps have their default
+				// collect mode hardcoded, since their subids are used as the
+				// dungeon index, and patches from asm/text.yaml aren't visible
+				// yet
+				if slot.treasure.id >= 0x30 && slot.treasure.id <= 0x31 {
+					slot.collectMode = collectModes["chest"]
+				} else if slot.treasure.id >= 0x32 && slot.treasure.id <= 0x33 {
+					slot.collectMode = collectModes["delay"]
+				} else if t, ok := rom.treasures[raw.Treasure]; ok {
 					slot.collectMode = t.mode
 				} else {
 					panic("treasure not found: " + raw.Treasure)
