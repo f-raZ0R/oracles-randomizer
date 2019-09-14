@@ -492,11 +492,14 @@ func itemFitsInSlot(itemNode, slotNode *node) bool {
 
 	// dungeons can only hold their respective dungeon-specific items. the
 	// HasPrefix is specifically for ages d6 boss key.
+	// (TODO: enable when keysanity is disabled)
+	/*
 	dungeonName := getDungeonName(itemNode.name)
 	if dungeonName != "" &&
 		!strings.HasPrefix(getDungeonName(slotNode.name), dungeonName) {
 		return false
 	}
+	*/
 
 	// and only seeds can be slotted in seed trees, of course
 	switch itemNode.name {

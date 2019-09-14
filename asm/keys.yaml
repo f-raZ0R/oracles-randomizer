@@ -1,0 +1,22 @@
+seasons:
+  15/51ea/: dw smallKeyTreasureData
+
+  15/smallKeyTreasureData: |
+        db 38,00,1a,42
+        db 38,01,1a,42
+        db 38,02,1a,42
+        db 38,03,1a,42
+        db 38,04,1a,42
+        db 38,05,1a,42
+        db 38,06,1a,42
+        db 38,07,1a,42
+        db 38,08,1a,42
+
+  # Upon obtaining a small key, use "param" instead of "wDungeonIndex" for
+  # which dungeon it is.
+  3f/459d/: ld a,c; nop; nop
+
+ages:
+  # Upon obtaining a small key, use "param" instead of "wDungeonIndex" for
+  # which dungeon it is.
+  3f/4597/: ld a,c; nop; nop

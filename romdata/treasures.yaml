@@ -33,13 +33,13 @@ common:
   power ring L-1: 0x2d0e
 
   # dungeon items
-  d1 small key: 0x3003
-  d2 small key: 0x3003
+  d1 small key: 0x3001
+  d2 small key: 0x3002
   d3 small key: 0x3003
-  d4 small key: 0x3003
-  d5 small key: 0x3003
-  d7 small key: 0x3003
-  d8 small key: 0x3003
+  d4 small key: 0x3004
+  d5 small key: 0x3005
+  d7 small key: 0x3007
+  d8 small key: 0x3008
   d1 boss key: 0x3103
   d2 boss key: 0x3103
   d3 boss key: 0x3103
@@ -85,8 +85,8 @@ seasons:
   rare peach stone: 0x2b02 # subrosia market
 
   # dungeon items
-  d0 small key: 0x3003
-  d6 small key: 0x3003
+  d0 small key: 0x3000
+  d6 small key: 0x3006
   d6 compass: 0x3202
   d6 dungeon map: 0x3302
 
