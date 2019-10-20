@@ -203,6 +203,10 @@ func (rom *romState) mutate(warpMap map[string]string, seed uint32,
 			count := sora(rom.game, 9, 13).(int)
 
 			for j := 0; j < count; j++ {
+				if j == 9 { // Skip special case for keys with no text
+					addr += 4
+					continue
+				}
 				rom.data[addr+2] = textIDs[i]
 				addr += 4
 			}

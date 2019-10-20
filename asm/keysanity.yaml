@@ -80,8 +80,8 @@ seasons:
         db 38,07,90,42
         db 38,08,90,42
 
-        # 09 = special case for small key falling from ceiling. Only for
-        # non-keysanity. (originally subid 1)
+        # 09 = special case for small keys without text. Only for non-keysanity.
+        # (originally subid 1)
         db 28,ff,ff,42
 
     15/bossKeyTreasureData: |
@@ -142,9 +142,9 @@ ages:
         db 38,07,90,42
         db 38,08,90,42
 
-        # 09 = special case for small key falling from ceiling. Only for
-        # non-keysanity. (originally subid 1)
-        db 28,ff,1a,42
+        # 09 = special case for small keys without text. Only for non-keysanity.
+        # (originally subid 1)
+        db 28,ff,ff,42
 
         db 00,00,00,00
         db 00,00,00,00
