@@ -62,5 +62,70 @@ seasons:
     3f/459d/: call setDungeonTextSubstitution
 
 ages:
+    16/53f3/: dw smallKeyTreasureData
+    16/53f7/: dw bossKeyTreasureData
+    16/53fb/: dw compassTreasureData
+    16/53ff/: dw mapTreasureData
+
+    16/smallKeyTreasureData: |
+        db 38,00,90,42
+        db 38,01,90,42
+        db 38,02,90,42
+        db 38,03,90,42
+        db 38,04,90,42
+        db 38,05,90,42
+        db 38,06,90,42
+        db 38,07,90,42
+        db 38,08,90,42
+        db 00,00,00,00
+        db 00,00,00,00
+        db 00,00,00,00
+        db 38,0c,90,42
+
+    16/bossKeyTreasureData: |
+        db 38,00,91,43
+        db 38,01,91,43
+        db 38,02,91,43
+        db 38,03,91,43
+        db 38,04,91,43
+        db 38,05,91,43
+        db 38,06,91,43
+        db 38,07,91,43
+        db 38,08,91,43
+        db 00,00,00,00
+        db 00,00,00,00
+        db 00,00,00,00
+        db 38,0c,91,43
+
+    16/compassTreasureData: |
+        db 68,00,92,41
+        db 68,01,92,41
+        db 68,02,92,41
+        db 68,03,92,41
+        db 68,04,92,41
+        db 68,05,92,41
+        db 68,06,92,41
+        db 68,07,92,41
+        db 68,08,92,41
+        db 00,00,00,00
+        db 00,00,00,00
+        db 00,00,00,00
+        db 38,0c,92,41
+
+    16/mapTreasureData: |
+        db 68,00,93,40
+        db 68,01,93,40
+        db 68,02,93,40
+        db 68,03,93,40
+        db 68,04,93,40
+        db 68,05,93,40
+        db 68,06,93,40
+        db 68,07,93,40
+        db 68,08,93,40
+        db 00,00,00,00
+        db 00,00,00,00
+        db 00,00,00,00
+        db 38,0c,93,40
+
     3f/457e/: call setDungeonTextSubstitution
     3f/4597/: call setDungeonTextSubstitution

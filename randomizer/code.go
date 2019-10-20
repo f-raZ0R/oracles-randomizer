@@ -16,11 +16,13 @@ import (
 // loaded from yaml, then converted to asm.
 type asmData struct {
 	filename string
-	Common   yaml.MapSlice
-	Floating yaml.MapSlice
-	Text     yaml.MapSlice
-	Seasons  yaml.MapSlice
-	Ages     yaml.MapSlice
+	Common      yaml.MapSlice
+	Floating    yaml.MapSlice
+	Text        yaml.MapSlice
+	SeasonsText yaml.MapSlice
+	AgesText    yaml.MapSlice
+	Seasons     yaml.MapSlice
+	Ages        yaml.MapSlice
 }
 
 // designates a position at which the translated asm will overwrite whatever
@@ -166,6 +168,17 @@ func (rom *romState) applyAsmData(asmFiles []*asmData) {
 		for _, item := range asmFile.Text {
 			k, v := item.Key.(string), item.Value.(string)
 			freeText[k] = processTextToAsm(v)
+		}
+		if rom.game == gameSeasons {
+			for _, item := range asmFile.SeasonsText {
+				k, v := item.Key.(string), item.Value.(string)
+				freeText[k] = processTextToAsm(v)
+			}
+		} else {
+			for _, item := range asmFile.AgesText {
+				k, v := item.Key.(string), item.Value.(string)
+				freeText[k] = processTextToAsm(v)
+			}
 		}
 	}
 	for _, slice := range slices {

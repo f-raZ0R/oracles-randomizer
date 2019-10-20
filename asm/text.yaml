@@ -2,45 +2,73 @@
 
 text:
   smallKeyText: |
-    You got a\x01
-    small key for\x01
-    \x0f\xff!\x00
+      You got a\x01
+      small key for\x01
+      \x0f\xff!\x00
   bossKeyText: |
-    You got the\x01
-    boss key of\x01
-    \x0f\xff!\x00
+      You got the\x01
+      boss key of\x01
+      \x0f\xff!\x00
   compassText: |
-    You got the\x01
-    compass of\x01
-    \x0f\xff!\x00
+      You got the\x01
+      compass of\x01
+      \x0f\xff!\x00
   mapText: |
-    You got the\x01
-    dungeon map of\x01
-    \x0f\xff!\x00
+      You got the\x01
+      dungeon map of\x01
+      \x0f\xff!\x00
 
+seasonstext:
   d0Text: |
-    Hero's Cave\x00
+      Hero's Cave\x00
   d1Text: |
-    Gnarled Root\x01
-    Dungeon\x00
+      Gnarled Root\x01
+      Dungeon\x00
   d2Text: |
-    Snake's Remains\x00
+      Snake's Remains\x00
   d3Text: |
-    Poison Moth's\x01
-    Lair\x00
+      Poison Moth's\x01
+      Lair\x00
   d4Text: |
-    Dancing Dragon\x01
-    Dungeon\x00
+      Dancing Dragon\x01
+      Dungeon\x00
   d5Text: |
-    Unicorn's Cave\x00
+      Unicorn's Cave\x00
   d6Text: |
-    Ancient Ruins\x00
+      Ancient Ruins\x00
   d7Text: |
-    Explorer's\x01
-    Crypt\x00
+      Explorer's\x01
+      Crypt\x00
   d8Text: |
-    Sword & Shield\x01
-    Maze\x00
+      Sword & Shield\x01
+      Maze\x00
+  d12Text: |
+      \x00
+
+agestext:
+  d0Text: |
+      Maku Path\x00
+  d1Text: |
+      Spirit's Grave\x00
+  d2Text: |
+      Wing Dungeon\x00
+  d3Text: |
+      Moonlit Grotto\x00
+  d4Text: |
+      Skull Dungeon\x00
+  d5Text: |
+      Crown Dungeon\x00
+  d6Text: |
+      Mermaid's Cave\x01
+      Present\x00
+  d7Text: |
+      Jabu Jabu's\x01
+      Belly\x00
+  d8Text: |
+      Ancient Tomb\x00
+  d12Text: |
+      Mermaid's Cave\x01
+      Past\x00
 
 common:
   # override addresses for owl statue text.
@@ -96,6 +124,10 @@ common:
       dw d6Text
       dw d7Text
       dw d8Text
+      dw 0
+      dw 0
+      dw 0
+      dw d12Text
 
   3f/smallKeyText: /include smallKeyText
   3f/bossKeyText: /include bossKeyText
@@ -110,6 +142,7 @@ common:
   3f/d6Text: /include d6Text
   3f/d7Text: /include d7Text
   3f/d8Text: /include d8Text
+  3f/d12Text: /include d12Text
 
 floating:
   # replace text in script command 9a (showtextnonexitable) using

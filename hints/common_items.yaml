@@ -100,7 +100,7 @@ d2 small key: a D2 small key
 d3 small key: a D3 small key
 d4 small key: a D4 small key
 d5 small key: a D5 small key
-d6 small key: a D6 small key
+#d6 small key: a D6 small key
 d7 small key: a D7 small key
 d8 small key: a D8 small key
 
@@ -109,7 +109,7 @@ d2 boss key: a D2 boss key
 d3 boss key: a D3 boss key
 d4 boss key: a D4 boss key
 d5 boss key: a D5 boss key
-d6 boss key: a D6 boss key
+#d6 boss key: a D6 boss key
 d7 boss key: a D7 boss key
 d8 boss key: a D8 boss key
 
@@ -118,7 +118,7 @@ d2 compass: the D2 compass
 d3 compass: the D3 compass
 d4 compass: the D4 compass
 d5 compass: the D5 compass
-d6 compass: the D6 compass
+#d6 compass: the D6 compass
 d7 compass: the D7 compass
 d8 compass: the D8 compass
 
@@ -127,6 +127,6 @@ d2 dungeon map: the D2 dungeon map
 d3 dungeon map: the D3 dungeon map
 d4 dungeon map: the D4 dungeon map
 d5 dungeon map: the D5 dungeon map
-d6 dungeon map: the D6 dungeon map
+#d6 dungeon map: the D6 dungeon map
 d7 dungeon map: the D7 dungeon map
 d8 dungeon map: the D8 dungeon map
