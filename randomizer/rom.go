@@ -198,6 +198,22 @@ func (rom *romState) mutate(warpMap map[string]string, seed uint32,
 		*/
 	}
 
+	// Fix dungeon item text for non-keysanity
+	if !ropts.keysanity {
+		labels := []string{"smallKeyTreasureData", "bossKeyTreasureData", "compassTreasureData", "mapTreasureData"}
+		textIDs := []byte{0x1a, 0x1b, 0x19, 0x18}
+
+		for i,label := range(labels) {
+			addr := rom.codeMutables[label].addr.fullOffset()
+			count := sora(rom.game, 9, 13).(int)
+
+			for j := 0; j < count; j++ {
+				rom.data[addr+2] = textIDs[i]
+				addr += 4
+			}
+		}
+	}
+
 	rom.setCompassData()
 	rom.setLinkedData()
 

@@ -14,6 +14,8 @@ seasons:
     15/51f2/: dw compassTreasureData
     15/51f6/: dw mapTreasureData
 
+    # All 4 of these tables are references in rom.go's "mutate" function to
+    # modify the text byte if keysanity is disabled.
     15/smallKeyTreasureData: |
         db 38,00,90,42
         db 38,01,90,42
