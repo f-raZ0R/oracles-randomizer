@@ -659,9 +659,16 @@ func optString(seed uint32, ropts randomizerOptions, flagSep string) string {
 		sum := sha1.Sum([]byte(ropts.plan.source))
 		s += fmt.Sprintf("plan-%03x", ((int(sum[0])<<8)+int(sum[1]))>>4)
 
-		// treewarp is the only option that makes a difference in plando
-		if ropts.treewarp {
-			s += flagSep + "t"
+		// treewarp and keysanity are the only options that makes a difference
+		// in plando
+		if ropts.treewarp || ropts.keysanity {
+			s += flagSep
+			if ropts.treewarp {
+				s += "t"
+			}
+			if ropts.keysanity {
+				s += "k"
+			}
 		}
 
 		return s
@@ -673,7 +680,7 @@ func optString(seed uint32, ropts randomizerOptions, flagSep string) string {
 		s += fmt.Sprintf("%08x", seed)
 	}
 
-	if ropts.treewarp || ropts.hard || ropts.dungeons || ropts.portals {
+	if ropts.treewarp || ropts.hard || ropts.dungeons || ropts.portals || ropts.keysanity {
 		// these are in chronological order of introduction, for no particular
 		// reason.
 		s += flagSep
@@ -688,6 +695,9 @@ func optString(seed uint32, ropts randomizerOptions, flagSep string) string {
 		}
 		if ropts.portals {
 			s += "p"
+		}
+		if ropts.keysanity {
+			s += "k"
 		}
 	}
 
