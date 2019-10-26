@@ -132,7 +132,7 @@ ages:
     16/53ff/: dw mapTreasureData
 
     16/smallKeyTreasureData: |
-        db 38,00,90,42
+        db 38,0d,90,42 # 00 = maku path (but the dungeon index is actually 0d, sue me)
         db 38,01,90,42
         db 38,02,90,42
         db 38,03,90,42

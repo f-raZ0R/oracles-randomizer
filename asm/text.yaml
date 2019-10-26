@@ -128,6 +128,7 @@ common:
       dw 0
       dw 0
       dw d12Text
+      dw d0Text # Ages "maku road" is actually dungeon index 0d (13)
 
   3f/smallKeyText: /include smallKeyText
   3f/bossKeyText: /include bossKeyText
