@@ -156,7 +156,7 @@ d4 color tile drop: [d4 minecart C,
         [hard, scent satchel]]]
 
 # 4 keys
-d4 minecart D: [d4 minecart C, count: [4, d4 small key]]
+d4 minecart D: [d4 color tile drop, count: [4, d4 small key]]
 d4 miniboss: [d4 minecart D,
     or: [sword, switch hook, scent shooter, punch enemy]]
 d4 small floor puzzle: [d4 miniboss, bombs]
