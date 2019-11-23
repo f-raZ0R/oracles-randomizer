@@ -167,7 +167,7 @@ d4 boss: [d4 large floor puzzle, d4 boss key, switch hook,
     or: [sword, boomerang, punch enemy]]
 
 # 5 keys
-d4 lava pot chest: [d4 large floor puzzle, switch hook,
+d4 lava pot chest: [d4 large floor puzzle, bracelet, switch hook,
     count: [5, d4 small key]]
 
 # d5
