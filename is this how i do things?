@@ -1,0 +1,6 @@
+go get github.com/f-raZ0R/oracles-randomizer
+cd $GOPATH/src/github.com/f-raZ0R/oracles-randomizer
+git fetch
+git checkout patch-2
+git submodule init
+git submodule update
