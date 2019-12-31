@@ -205,6 +205,8 @@ ages:
       db 01,a5,00,45,0b # cont.
       db 01,a5,00,55,6c # cont.
       db 00,83,00,44,d7 # portal outside D2 present
+      db 01,48,00,31,15 # past maku road: remove dirt when exiting
+      db 01,48,02,31,cd # cont.
       db ff
 
   # burning the first tree in yoll graveyard should set room flag 1 so that it
