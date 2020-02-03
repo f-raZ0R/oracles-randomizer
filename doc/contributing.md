@@ -10,7 +10,7 @@ An environment with Git and Go is required to build the randomizer. The
 following instructions are for building the dev branch.
 
 First, clone and set up the repository:
-
+(Remember that if using Windows, use backslashes, not forward slashes, for the second line, as it is a file location)
 ```
 go get github.com/jangler/oracles-randomizer
 cd $GOPATH/src/github.com/jangler/oracles-randomizer
