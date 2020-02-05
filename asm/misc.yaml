@@ -1,13 +1,13 @@
 common:
   # allow skipping the capcom screen after one second by pressing start.
   03/skipCapcom: |
-      push hl
-      ld a,(cbb3)
-      cp a,94
-      jr nc,.noSkip
-      call forceEnableIntroInputs
-      .noSkip
-      pop hl
+     push hl
+     ld a,(cbb3)
+     cp a,94
+     jr nc,.noSkip
+     call forceEnableIntroInputs
+     .noSkip
+     pop hl
       jp decHlRef16WithCap
   # always take double damage via cursed ring if able, even if cursed ring isn't equipped
   06/4668: |
