@@ -18,22 +18,22 @@ common:
     ld a,b			
     add a			
    ld b,a			
-    ld hl,@ringDamageModifierTable		
+    ld hl,.ringDamageModifierTable		
     ld a,(wActiveRing)		
     ld e,a			
     ldi a,(hl)		
     or a			
-    jr z,@matchingRingNotFound		
+    jr z,.matchingRingNotFound		
     cp e			
-    jr z,@matchingRingFound	
+    jr z,.matchingRingFound	
    inc hl			
    jr --			
-  @matchingRingNotFound:
+   .matchingRingNotFound
     ld a,e			
     cp BLUE_RING			
-    jr z,@blueRing			
+    jr z,.blueRing			
     cp GREEN_RING			
-    jr z,@greenRing			
+    jr z,.greenRing			
     ret nz			
   # use different seed capacity table, so that level zero satchel can still
   # hold 20 seeds.
