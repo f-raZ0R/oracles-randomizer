@@ -16,7 +16,7 @@ common:
    or a
    ret z
    ld a,b
-   add a
+   add a,a
    ld b,a
    ld hl,.ringDamageModifierTable
    ld a,(wActiveRing)
