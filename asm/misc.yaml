@@ -9,7 +9,7 @@ common:
      .noSkip
      pop hl
       jp decHlRef16WithCap
-  # always take double damage via cursed ring if able, even if cursed ring isn't equipped
+  # always take double damage via cursed ring
   06/4668: |
    ld e,SpecialObject.damageToApply
    ld a,(de)
@@ -18,23 +18,6 @@ common:
    ld a,b
    add a,a
    ld b,a
-   ld hl,.ringDamageModifierTable
-   ld a,(wActiveRing)
-   ld e,a
-   ldi a,(hl)
-   or a
-   jr z,.matchingRingNotFound
-   cp e
-   jr z,.matchingRingFound
-   inc hl
-   jr --
-   .matchingRingNotFound
-   ld a,e
-   cp BLUE_RING
-   jr z,.blueRing
-   cp GREEN_RING
-   jr z,.greenRing
-    ret nz
   # use different seed capacity table, so that level zero satchel can still
   # hold 20 seeds.
   3f/seedCapacityTable: |
