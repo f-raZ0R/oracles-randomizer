@@ -10,13 +10,10 @@ common:
      pop hl
       jp decHlRef16WithCap
   # always take double damage via cursed ring
-  06/466a: |
-   ld a,(de)
-   or a
-   ret z
-   ld a,b
-   add a,a
-   ld b,a
+  06/4665: |
+  linkUpdateDamageToApplyForRings:
+   ld a,b $4666
+   add a,a ; $4667
   # use different seed capacity table, so that level zero satchel can still
   # hold 20 seeds.
   3f/seedCapacityTable: |
