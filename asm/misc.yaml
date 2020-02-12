@@ -11,8 +11,8 @@ common:
       jp decHlRef16WithCap
   # always take double damage via cursed ring
   06/466f: |
-  ld a,b
-  add a
+   ld a,b
+   add a,a
   # use different seed capacity table, so that level zero satchel can still
   # hold 20 seeds.
   3f/seedCapacityTable: |
