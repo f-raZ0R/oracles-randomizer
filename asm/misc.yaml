@@ -16,7 +16,7 @@ common:
    bit 7,a
    jr nz,.thing
    ld a,$ff
-  .thing:
+   .thing:
   # use different seed capacity table, so that level zero satchel can still
   # hold 20 seeds.
   3f/seedCapacityTable: |
