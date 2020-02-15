@@ -10,13 +10,20 @@ common:
      pop hl
       jp decHlRef16WithCap
   # always take double damage via cursed ring
-  06/46a4: |
-   ld a,b
-   add a,a
-   bit 7,a
-   jr nz,.PlaceHolderLabel
-   ld a,ff
-   .PlaceHolderLabel
+06/46a4: |
+   jp damageMultiplierHook
+
+06/damageMultiplierHook: |
+  ld a,b
+  add a,a
+  bit 7,a
+  jr nz,.label
+  ld a,ff
+  .label
+  ld e,25 (SpecialObject.damageToApply)
+  ld (de),a
+  ret
+  
   # use different seed capacity table, so that level zero satchel can still
   # hold 20 seeds.
   3f/seedCapacityTable: |
