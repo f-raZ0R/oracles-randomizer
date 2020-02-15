@@ -10,19 +10,28 @@ common:
      pop hl
       jp decHlRef16WithCap
   # always take double damage via cursed ring
-06/46a4: |
+06/4668: |
    jp damageMultiplierHook
 
 06/damageMultiplierHook: |
   ld a,b
   add a,a
-  bit 7,a
-  jr nz,.label
-  ld a,ff
-  .label
-  ld e,25 (SpecialObject.damageToApply)
-  ld (de),a
-  ret
+  ld e,SpecialObject.damageToApply
+  ld a,(de)
+  or a
+  ret z
+  ld b,a
+  ld hl,.ringDamageModifierTable
+  ld a,(wActiveRing)
+  ld e,a
+ .label
+ ldi a,(hl)
+  or a
+  jr z,.matchingRingNotFound
+  cp e
+  jr z,.matchingRingFound
+  inc hl
+  jr .label
   
   # use different seed capacity table, so that level zero satchel can still
   # hold 20 seeds.
