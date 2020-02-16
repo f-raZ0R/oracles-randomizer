@@ -9,19 +9,7 @@ common:
      .noSkip
      pop hl
       jp decHlRef16WithCap
-  # always take double damage via cursed ring
-  06/466b/: |
-   add a,a
   
-  06/4688/: |
-   jp cursedHook
-   
-  06/cursedHook: |
-   ld a,b
-   cp a,0a
-   jp nz,46a4
-   add a,a
-   jp 46a4
    
   # use different seed capacity table, so that level zero satchel can still
   # hold 20 seeds.
@@ -34,7 +22,21 @@ seasons:
   # remove hard-coded d5 boss key room beep - it beeps just fine based on
   # normal dungeon room properties.
   01/4a09/: nop; nop
-
+  
+# always take double damage via cursed ring
+  06/464a/: |
+   add a,a
+  
+  06/4667/: |
+   jp cursedHook
+   
+  06/cursedHook: |
+   ld a,b
+   cp a,0a
+   jp nz,4683
+   add a,a
+   jp 4683
+   
   # make link actionable as soon as he drops into the world.
   05/4d98/: jp setLinkIdOverride
 
@@ -273,3 +275,17 @@ ages:
       db f2
   07/623c/: |
       sra a
+
+# always take double damage via cursed ring
+  06/466b/: |
+   add a,a
+  
+  06/4688/: |
+   jp cursedHook
+   
+  06/cursedHook: |
+   ld a,b
+   cp a,0a
+   jp nz,46a4
+   add a,a
+   jp 46a4
