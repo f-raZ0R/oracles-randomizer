@@ -13,6 +13,16 @@ common:
   06/466b/: |
    add a,a
   
+  06/4688/: |
+   jp cursedHook
+   
+  06/cursedHook: |
+   cp CURSED_RING
+   jp 46a4
+   ld a,b
+   add a,a
+   jp 46a4
+   
   # use different seed capacity table, so that level zero satchel can still
   # hold 20 seeds.
   3f/seedCapacityTable: |
