@@ -17,9 +17,9 @@ common:
    jp cursedHook
    
   06/cursedHook: |
-   cp a,0a
-   jp 46a4
    ld a,b
+   cp a,0a
+   jp nz,46a4
    add a,a
    jp 46a4
    
