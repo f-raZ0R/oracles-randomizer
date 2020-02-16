@@ -262,4 +262,4 @@ ages:
       db f3; dw nuunMooshConditionalPegDropObjects
       db f2
   07/623c/: |
-      sra a,a
+      sra a
