@@ -17,7 +17,7 @@ common:
    jp cursedHook
    
   06/cursedHook: |
-   cp a,CURSED_RING
+   cp a,0a
    jp 46a4
    ld a,b
    add a,a
