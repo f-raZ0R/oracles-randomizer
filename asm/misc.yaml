@@ -10,7 +10,7 @@ common:
      pop hl
       jp decHlRef16WithCap
   # always take double damage via cursed ring
-  06/466b: |
+  06/466b/: |
    add a,a
   
   # use different seed capacity table, so that level zero satchel can still
