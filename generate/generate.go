@@ -17,7 +17,7 @@ const (
 
 // Code generated - DO NOT EDIT.
 
-import "oracles-randomizer/randomizer"
+import "github.com/f-raz0r/oracles-randomizer/randomizer"
 
 func main() {
 	randomizer.Main()

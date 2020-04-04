@@ -8,7 +8,6 @@ maku path basement: {or: [
     [inner past - maku tree cave, d0 small key] #south entrance
 ]}
 
-
 # d1
 enter d1: {or: []}
 

@@ -41,7 +41,7 @@ func filterJunk(g graph, checks map[*node]*node,
 	// get all required items. if multiple instances of the same class exist
 	// and any is skippable but some are required, the first instances are
 	// considered required and the rest are considered unrequired.
-	spheres, _, _, _ := getSpheres(g, checks, keysanity)
+	spheres, _, _, _ := getSpheres(g, checks, keysanity, false)
 	for _, class := range getAllItemClasses(checks) {
 		// skip known inert items
 		if class != "rupees" && itemIsInert(treasures, class) {
