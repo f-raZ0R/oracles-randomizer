@@ -79,6 +79,9 @@ General details common to both games:
   warps to the seed tree in Horon Village or Lynna City. Tree warp comes with
   no warranty and is not supported as a "feature", so think carefully before
   using it.
+- If keysanity is enabled, dungeon-specific items (like keys, maps, and
+  compasses) can appear anywhere. Each dungeon's compass will detect its own
+  keys by playing a unique sound-effect depending on the dungeon.
 
 For game-specific notes on randomization and logic, see
 [seasons_notes.md](https://github.com/jangler/oracles-randomizer/blob/master/doc/seasons_notes.md)

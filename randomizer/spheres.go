@@ -26,7 +26,7 @@ func getChecks(usedItems, usedSlots *list.List) map[*node]*node {
 // items from sphere 0, and so on. each check only belongs to one sphere. it
 // also returns a separate slice of checks that aren't reachable at all.
 // returned slices are ordered alphabetically.
-func getSpheres(g graph, checks map[*node]*node, returnEntrances bool) ([][]*node, []*node, [][]*node, []*node) {
+func getSpheres(g graph, checks map[*node]*node, returnEntrances bool, keysanity bool) ([][]*node, []*node, [][]*node, []*node) {
 	outerRegexp := regexp.MustCompile("outer .+")
 
 	reached := make(map[*node]bool)
@@ -38,9 +38,10 @@ func getSpheres(g graph, checks map[*node]*node, returnEntrances bool) ([][]*nod
 	// have their parents restored even if they're not reachable yet.
 	unreachedChecks := make(map[*node]*node)
 	for slot, item := range checks {
-		// don't delimit spheres by intra-dungeon keys -- it obscures "actual"
-		// progression in the log file.
-		if !keyRegexp.MatchString(item.name) {
+		// when keysanity is disabled, don't delimit spheres by
+		// intra-dungeon keys -- it obscures "actual" progression in the
+		// log file.
+		if keysanity || !keyRegexp.MatchString(item.name) {
 			unreachedChecks[slot] = item
 			item.removeParent(slot)
 		}

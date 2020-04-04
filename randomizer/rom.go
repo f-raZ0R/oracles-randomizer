@@ -82,14 +82,14 @@ type romState struct {
 	assembler    *assembler
 }
 
-func newRomState(data []byte, game int) *romState {
+func newRomState(data []byte, game int, keysanity bool) *romState {
 	rom := &romState{
 		game:      game,
 		data:      data,
 		treasures: loadTreasures(data, game),
 	}
 	rom.itemSlots = rom.loadSlots()
-	rom.initBanks()
+	rom.initBanks(keysanity)
 	return rom
 }
 
@@ -280,13 +280,15 @@ func (rom *romState) mutate(warpMap map[string]string, seed uint32,
 
 	rom.setBossItemAddrs()
 	rom.setSeedData()
-	rom.setRoomTreasureData()
+	rom.setRoomTreasureData(ropts.keysanity)
 	rom.setFileSelectText(optString(seed, ropts, "+"))
 	rom.attachText()
 
 	// regenerate collect mode table to accommodate changes based on contents.
 	rom.codeMutables["collectModeTable"].new =
-		[]byte(makeCollectModeTable(rom.itemSlots))
+		[]byte(makeCollectModeTable(rom.itemSlots, ropts.keysanity))
+	rom.codeMutables["compassChimeTable"].new =
+		[]byte(makeCompassChimeTable(rom.game, rom.itemSlots))
 
 	// set the text IDs for all rings to $ff (blank), since custom code deals
 	// with text
@@ -320,8 +322,8 @@ func (rom *romState) mutate(warpMap map[string]string, seed uint32,
 
 		// annoying special case to prevent text on key drop
 		mut := rom.itemSlots["d7 armos puzzle"]
-		if mut.treasure.id == rom.treasures["d7 small key"].id {
-			rom.data[mut.subidAddrs[0].fullOffset()] = 0x01
+		if !ropts.keysanity && mut.treasure.id == rom.treasures["d7 small key"].id {
+			rom.data[mut.subidAddrs[0].fullOffset()] = 0x09
 		}
 	} else {
 		rom.itemSlots["nayru's house"].mutate(rom.data)
@@ -336,9 +338,31 @@ func (rom *romState) mutate(warpMap map[string]string, seed uint32,
 
 		// other special case to prevent text on key drop
 		mut := rom.itemSlots["d8 stalfos"]
-		if mut.treasure.id == rom.treasures["d8 small key"].id {
-			rom.data[mut.subidAddrs[0].fullOffset()] = 0x00
+		if !ropts.keysanity && mut.treasure.id == rom.treasures["d8 small key"].id {
+			rom.data[mut.subidAddrs[0].fullOffset()] = 0x09
 		}
+	}
+
+	// Fix dungeon item text for non-keysanity
+	if !ropts.keysanity {
+		labels := []string{"smallKeyTreasureData", "bossKeyTreasureData", "compassTreasureData", "mapTreasureData"}
+		textIDs := []byte{0x1a, 0x1b, 0x19, 0x18}
+
+		for i,label := range(labels) {
+			addr := rom.codeMutables[label].addr.fullOffset()
+			count := sora(rom.game, 9, 13).(int)
+
+			for j := 0; j < count; j++ {
+				if j == 9 { // Skip special case for keys with no text
+					addr += 4
+					continue
+				}
+				rom.data[addr+2] = textIDs[i]
+				addr += 4
+			}
+		}
+	} else { // Keysanity
+		rom.data[rom.codeMutables["isKeysanityEnabled"].addr.fullOffset()] = 1
 	}
 
 	rom.setCompassData()
@@ -483,9 +507,9 @@ func inflictCamelCase(s string) string {
 
 // fill table. initial table is blank, since it's created before items are
 // placed.
-func (rom *romState) setRoomTreasureData() {
+func (rom *romState) setRoomTreasureData(keysanity bool) {
 	rom.codeMutables["roomTreasures"].new =
-		[]byte(makeRoomTreasureTable(rom.game, rom.itemSlots))
+		[]byte(makeRoomTreasureTable(rom.game, rom.itemSlots, keysanity))
 	if rom.game == gameSeasons {
 		t := rom.itemSlots["d7 zol button"].treasure
 		rom.codeMutables["aboveD7ZolButtonId"].new = []byte{t.id}
@@ -519,6 +543,7 @@ func (rom *romState) setCompassData() {
 	for _, prefix := range prefixes {
 		for name, slot := range rom.itemSlots {
 			if strings.HasPrefix(name, prefix+" ") {
+				// safe to assume this is in a dungeon
 				offset := getDungeonPropertiesAddr(
 					rom.game, slot.group, slot.room).fullOffset()
 				rom.data[offset] = rom.data[offset] & 0xed // reset bit 4
@@ -546,6 +571,9 @@ func (rom *romState) setCompassData() {
 		}
 
 		for _, slot := range slots {
+			if slot.group < 4 { // no compass chimes outside dungeons
+				continue
+			}
 			offset := getDungeonPropertiesAddr(
 				rom.game, slot.group, slot.room).fullOffset()
 			rom.data[offset] = (rom.data[offset] & 0xbf) | 0x10 // set bit 4, reset bit 6
@@ -679,6 +707,7 @@ func (rom *romState) setLinkedData() {
 	if rom.game == gameSeasons {
 		// set linked starting / hero's cave terrace items based on which items
 		// in unlinked hero's cave aren't keys. order matters.
+		// FIXME: Doesn't work with keysanity!
 		var tStart, tCave *treasure
 		if rom.itemSlots["d0 key chest"].treasure.id == 0x30 {
 			tStart = rom.itemSlots["d0 sword chest"].treasure

@@ -59,6 +59,7 @@ var (
 	flagDungeons bool
 	flagEntrance bool
 	flagHard     bool
+        flagKeysanity bool
 	flagNoUI     bool
 	flagPlan     string
 	flagPortals  bool
@@ -73,10 +74,12 @@ type randomizerOptions struct {
 	hard     bool
 	dungeons bool
 	portals  bool
+        keysanity bool
 	plan     *plan
 	race     bool
 	seed     string
 	entrance bool
+
 }
 
 // initFlags initializes the CLI/TUI option values and variables.
@@ -92,6 +95,8 @@ func initFlags() {
 		"shuffle all entrances")
 	flag.BoolVar(&flagHard, "hard", false,
 		"enable more difficult logic")
+	flag.BoolVar(&flagKeysanity, "keysanity", false,
+		"shuffle dungeon keys, maps, and compasses outside their dungeons")
 	flag.BoolVar(&flagNoUI, "noui", false,
 		"use command line without prompts if input file is given")
 	flag.StringVar(&flagPlan, "plan", "",
@@ -128,6 +133,7 @@ func Main() {
 		hard:     flagHard,
 		dungeons: flagDungeons,
 		portals:  flagPortals,
+		keysanity:flagKeysanity,
 		race:     flagRace,
 		seed:     flagSeed,
 		entrance: flagEntrance,
@@ -158,7 +164,7 @@ func Main() {
 		// i forget why or whether this is useful.
 		var rom *romState
 		if flag.Arg(1) == "" {
-			rom = newRomState(nil, game)
+			rom = newRomState(nil, game, ropts.keysanity)
 		} else {
 			f, err := os.Open(flag.Arg(1))
 			if err != nil {
@@ -171,7 +177,7 @@ func Main() {
 				fatal(err, printErrf)
 				return
 			}
-			rom = newRomState(b, game)
+			rom = newRomState(b, game, ropts.keysanity)
 		}
 
 		fmt.Println(rom.findAddr(byte(bank), uint16(addr)))
@@ -199,7 +205,7 @@ func Main() {
 		}
 		game := reverseLookupOrPanic(gameNames, tokens[0]).(int)
 
-		rom := newRomState(nil, game)
+		rom := newRomState(nil, game, ropts.keysanity)
 		if err := rom.showAsm(tokens[1], os.Stdout); err != nil {
 			fatal(err, printErrf)
 			return
@@ -244,7 +250,7 @@ func runRandomizer(ui *uiInstance, ropts randomizerOptions, logf logFunc) {
 			fatal(err, logf)
 			return
 		} else {
-			rom = newRomState(b, game)
+			rom = newRomState(b, game, ropts.keysanity)
 		}
 
 		logf("randomizing %s.", infile)
@@ -360,6 +366,11 @@ func getAndLogOptions(game int, ui *uiInstance, ropts *randomizerOptions,
 		}
 		logf("portal shuffle %s.", ternary(ropts.portals, "on", "off"))
 	}
+
+	if ui != nil {
+		ropts.keysanity = ui.doPrompt("enable keysanity? (y/n)") == 'y'
+	}
+	logf("keysanity %s.", ternary(ropts.keysanity, "on", "off"))
 }
 
 // attempt to write rom data to a file and print summary info.
@@ -555,7 +566,7 @@ func randomize(rom *romState, dirName, logFilename string,
 	} else {
 		logf("applying plan...")
 		var err error
-		ri, err = makePlannedRoute(rom, ropts.plan)
+		ri, err = makePlannedRoute(rom, ropts.plan, ropts)
 		if err != nil {
 			return 0, nil, "", err
 		}
@@ -569,7 +580,7 @@ func randomize(rom *romState, dirName, logFilename string,
 
 	// configuration found; come up with auxiliary data
 	checks := getChecks(ri.usedItems, ri.usedSlots)
-	spheres, extra, entrances, extraEntrances := getSpheres(ri.graph, checks, true)
+	spheres, extra, entrances, extraEntrances := getSpheres(ri.graph, checks, ropts.keysanity)
 	/*
 		owlNames := orderedKeys(getOwlIds(rom.game))
 		owlHinter := newHinter(rom.game)
@@ -659,9 +670,16 @@ func optString(seed uint32, ropts randomizerOptions, flagSep string) string {
 		sum := sha1.Sum([]byte(ropts.plan.source))
 		s += fmt.Sprintf("plan-%03x", ((int(sum[0])<<8)+int(sum[1]))>>4)
 
-		// treewarp is the only option that makes a difference in plando
-		if ropts.treewarp {
-			s += flagSep + "t"
+		// treewarp and keysanity are the only options that makes a difference
+		// in plando
+		if ropts.treewarp || ropts.keysanity {
+			s += flagSep
+			if ropts.treewarp {
+				s += "t"
+			}
+			if ropts.keysanity {
+				s += "k"
+			}
 		}
 
 		return s
@@ -673,7 +691,7 @@ func optString(seed uint32, ropts randomizerOptions, flagSep string) string {
 		s += fmt.Sprintf("%08x", seed)
 	}
 
-	if ropts.treewarp || ropts.hard || ropts.dungeons || ropts.portals || ropts.entrance {
+	if ropts.treewarp || ropts.hard || ropts.dungeons || ropts.portals || ropts.entrance || ropts.keysanity{
 		// these are in chronological order of introduction, for no particular
 		// reason.
 		s += flagSep
@@ -691,6 +709,11 @@ func optString(seed uint32, ropts randomizerOptions, flagSep string) string {
 		}
 		if ropts.entrance {
 			s += "e"
+
+                }
+		if ropts.keysanity {
+			s += "k"
+
 		}
 	}
 

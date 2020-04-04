@@ -40,6 +40,9 @@ kill pumpkin head: [bracelet,
 kill pols voice ranged: {or: [harp, flute, bombs, gale shooter]}
 kill pols voice: {or: [kill pols voice ranged, [hard, gale satchel]]}
 
+kill pols voice ranged: {or: [harp, flute, bombs, gale shooter]}
+kill pols voice: {or: [kill pols voice ranged, [hard, gale satchel]]}
+
 # spiked beetles can't be punched for some reason
 kill spiked beetle: {or: [
     gale shooter, [hard, gale satchel],

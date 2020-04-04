@@ -8,6 +8,7 @@ import (
 	"sort"
 	"strconv"
 	"strings"
+	"encoding/hex"
 
 	"gopkg.in/yaml.v2"
 )
@@ -15,10 +16,13 @@ import (
 // loaded from yaml, then converted to asm.
 type asmData struct {
 	filename string
-	Common   yaml.MapSlice
-	Floating yaml.MapSlice
-	Seasons  yaml.MapSlice
-	Ages     yaml.MapSlice
+	Common      yaml.MapSlice
+	Floating    yaml.MapSlice
+	Text        yaml.MapSlice
+	SeasonsText yaml.MapSlice
+	AgesText    yaml.MapSlice
+	Seasons     yaml.MapSlice
+	Ages        yaml.MapSlice
 }
 
 // designates a position at which the translated asm will overwrite whatever
@@ -66,18 +70,18 @@ func (rom *romState) replaceRaw(addr address, label, data string) {
 // returns a byte table of (group, room, collect mode) entries for randomized
 // items. a mode >7f means to use &7f as an index to a jump table for special
 // cases.
-func makeCollectModeTable(itemSlots map[string]*itemSlot) string {
+func makeCollectModeTable(itemSlots map[string]*itemSlot, keysanity bool) string {
 	b := new(strings.Builder)
 
 	for _, key := range orderedKeys(itemSlots) {
 		slot := itemSlots[key]
 
-		// use no pickup animation for falling small keys
 		mode := slot.collectMode
-		if mode == 0x29 && slot.treasure != nil && slot.treasure.id == 0x30 {
+		// use no pickup animation for falling small keys (only when keysanity
+		// is disabled)
+		if !keysanity && mode == 0x29 && slot.treasure != nil && slot.treasure.id == 0x30 {
 			mode &= 0xf8
 		}
-
 		if _, err := b.Write([]byte{slot.group, slot.room, mode}); err != nil {
 			panic(err)
 		}
@@ -95,7 +99,7 @@ func makeCollectModeTable(itemSlots map[string]*itemSlot) string {
 
 // returns a byte table (group, room, id, subid) entries for randomized small
 // key drops (and other falling items, but those entries won't be used).
-func makeRoomTreasureTable(game int, itemSlots map[string]*itemSlot) string {
+func makeRoomTreasureTable(game int, itemSlots map[string]*itemSlot, keysanity bool) string {
 	b := new(strings.Builder)
 
 	for _, key := range orderedKeys(itemSlots) {
@@ -112,9 +116,11 @@ func makeRoomTreasureTable(game int, itemSlots map[string]*itemSlot) string {
 		var err error
 		if slot.treasure == nil {
 			_, err = b.Write([]byte{slot.group, slot.room, 0x00, 0x00})
-		} else if slot.treasure.id == 0x30 {
-			// make small keys the normal falling variety, with no text box.
-			_, err = b.Write([]byte{slot.group, slot.room, 0x30, 0x01})
+		} else if !keysanity && slot.treasure.id == 0x30 {
+			// make small keys the normal falling variety, with no text box
+			// (only when keysanity is disabled). Using subid 0x09 as defined in
+			// asm/keysanity.yaml.
+			_, err = b.Write([]byte{slot.group, slot.room, 0x30, 0x09})
 		} else {
 			_, err = b.Write([]byte{slot.group, slot.room,
 				slot.treasure.id, slot.treasure.subid})
@@ -123,6 +129,41 @@ func makeRoomTreasureTable(game int, itemSlots map[string]*itemSlot) string {
 			panic(err)
 		}
 	}
+
+	b.Write([]byte{0xff})
+	return b.String()
+}
+
+// returns a byte table (group, room, dungeon) for where compass chimes should play.
+// (TODO: how to handle rooms with multiple items in them?)
+// FIXME: Plandos break BADLY when any keys are added or removed, because the
+// size of this table is based on the initial item slots and assumed to not
+// change.
+func makeCompassChimeTable(game int, itemSlots map[string]*itemSlot) string {
+	b := new(strings.Builder)
+	count := 0
+
+	for _, key := range orderedKeys(itemSlots) {
+		slot := itemSlots[key]
+
+		var err error
+		if slot.treasure == nil {
+			_, err = b.Write([]byte{slot.group, slot.room, 0x00})
+			count += 1
+			continue
+		} else if !(slot.treasure.id == 0x30 || slot.treasure.id == 0x31) {
+			continue
+		}
+
+		//println(slot.treasure.displayName)
+		count += 1
+		_, err = b.Write([]byte{slot.group, slot.room, slot.treasure.subid})
+		if err != nil {
+			panic(err)
+		}
+	}
+
+	//println("Count: " + strconv.Itoa(count))
 
 	b.Write([]byte{0xff})
 	return b.String()
@@ -146,7 +187,7 @@ func (rom *romState) applyAsmData(asmFiles []*asmData) {
 		}
 	}
 
-	// include free code
+	// include free code and text
 	freeCode := make(map[string]string)
 	for _, asmFile := range asmFiles {
 		for _, item := range asmFile.Floating {
@@ -154,12 +195,34 @@ func (rom *romState) applyAsmData(asmFiles []*asmData) {
 			freeCode[k] = v
 		}
 	}
+	freeText := make(map[string]string)
+	for _, asmFile := range asmFiles {
+		for _, item := range asmFile.Text {
+			k, v := item.Key.(string), item.Value.(string)
+			freeText[k] = processTextToAsm(v)
+		}
+		if rom.game == gameSeasons {
+			for _, item := range asmFile.SeasonsText {
+				k, v := item.Key.(string), item.Value.(string)
+				freeText[k] = processTextToAsm(v)
+			}
+		} else {
+			for _, item := range asmFile.AgesText {
+				k, v := item.Key.(string), item.Value.(string)
+				freeText[k] = processTextToAsm(v)
+			}
+		}
+	}
 	for _, slice := range slices {
 		for name, item := range slice {
 			v := item.Value.(string)
 			if strings.HasPrefix(v, "/include") {
 				funcName := strings.Split(v, " ")[1]
-				slice[name].Value = freeCode[funcName]
+				if freeCode[funcName] != "" {
+					slice[name].Value = freeCode[funcName]
+				} else {
+					slice[name].Value = freeText[funcName]
+				}
 			}
 		}
 	}
@@ -333,7 +396,23 @@ func (rom *romState) attachText() {
 	}
 }
 
-var hashCommentRegexp = regexp.MustCompile(" #.+?\n")
+var hashCommentRegexp = regexp.MustCompile("( #.*)?\n")
+
+// same as processText but result is asm using "db"
+func processTextToAsm(s string) string {
+	data := processText(s)
+	str := "db "
+	first := true
+
+	for _,b := range data {
+		if first == false {
+			str = str + ","
+		}
+		first = false
+		str = str + hex.EncodeToString([]byte{b})
+	}
+	return str
+}
 
 // processes a raw text string as a go string literal, converting escape
 // sequences to their actual values. "comments" and literal newlines are
@@ -377,7 +456,7 @@ func loadShopNames(game string) map[string]string {
 
 // set up all the pre-randomization asm changes, and track the state so that
 // the randomization changes can be applied later.
-func (rom *romState) initBanks() {
+func (rom *romState) initBanks(keysanity bool) {
 	rom.codeMutables = make(map[string]*mutableRange)
 	rom.bankEnds = loadBankEnds(gameNames[rom.game])
 	asm, err := newAssembler()
@@ -391,9 +470,15 @@ func (rom *romState) initBanks() {
 	roomTreasureBank := byte(sora(rom.game, 0x3f, 0x38).(int))
 	numOwlIds := sora(rom.game, 0x1e, 0x14).(int)
 	rom.replaceRaw(address{0x06, 0}, "collectModeTable",
-		makeCollectModeTable(rom.itemSlots))
+		makeCollectModeTable(rom.itemSlots, keysanity))
 	rom.replaceRaw(address{roomTreasureBank, 0}, "roomTreasures",
-		makeRoomTreasureTable(rom.game, rom.itemSlots))
+		makeRoomTreasureTable(rom.game, rom.itemSlots, keysanity))
+
+	// compass chime table can go anywhere (had to move it out of bank 1). Bank
+	// 0x38 seemed like a good candidate for both games.
+	rom.replaceRaw(address{0x38, 0}, "compassChimeTable",
+		makeCompassChimeTable(rom.game, rom.itemSlots))
+
 	rom.replaceRaw(address{0x3f, 0}, "owlTextOffsets",
 		string(make([]byte, numOwlIds*2)))
 

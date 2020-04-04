@@ -1,7 +1,78 @@
-# all of the text itself is set after being loaded; see romdata/text.yaml.
+# some text is set after being loaded; see romdata/text.yaml.
+
+text:
+  smallKeyText: |
+      You got a\x01
+      small key for\x01
+      \x0f\xff!\x00
+  bossKeyText: |
+      You got the\x01
+      boss key of\x01
+      \x0f\xff!\x00
+  compassText: |
+      You got the\x01
+      compass of\x01
+      \x0f\xff!\x00
+  mapText: |
+      You got the\x01
+      dungeon map of\x01
+      \x0f\xff!\x00
+
+seasonstext:
+  d0Text: |
+      Hero's Cave\x00
+  d1Text: |
+      Gnarled Root\x01
+      Dungeon\x00
+  d2Text: |
+      Snake's Remains\x00
+  d3Text: |
+      Poison Moth's\x01
+      Lair\x00
+  d4Text: |
+      Dancing Dragon\x01
+      Dungeon\x00
+  d5Text: |
+      Unicorn's Cave\x00
+  d6Text: |
+      Ancient Ruins\x00
+  d7Text: |
+      Explorer's\x01
+      Crypt\x00
+  d8Text: |
+      Sword & Shield\x01
+      Maze\x00
+  d12Text: |
+      \x00
+
+agestext:
+  d0Text: |
+      Maku Path\x00
+  d1Text: |
+      Spirit's Grave\x00
+  d2Text: |
+      Wing Dungeon\x00
+  d3Text: |
+      Moonlit Grotto\x00
+  d4Text: |
+      Skull Dungeon\x00
+  d5Text: |
+      Crown Dungeon\x00
+  d6Text: |
+      Mermaid's Cave\x01
+      Present\x00
+  d7Text: |
+      Jabu Jabu's\x01
+      Belly\x00
+  d8Text: |
+      Ancient Tomb\x00
+  d12Text: |
+      Mermaid's Cave\x01
+      Past\x00
 
 common:
   # override addresses for owl statue text.
+  # (Note: needs to be updated to work with "useCustomText" below.)
   3f/useOwlText: |
       ld (w7ActiveBank),a
       ld a,(wTextIndexH)
@@ -16,6 +87,63 @@ common:
       ld a,BANK_OWL_TEXT
       ld (w7ActiveBank),a
       ret
+
+  # Checks for custom text (currently just for keysanity).
+  3f/useCustomText: |
+      ld (w7ActiveBank),a
+      ld a,(wTextIndexH)
+      cp a,04
+      ret nz
+      ld a,(wTextIndexL)
+      sub a,90
+      ret c
+      ld hl,customTextOffsets
+      rst 18
+      ldi a,(hl)
+      ld h,(hl)
+      ld l,a
+      ld a,3f
+      ld (w7ActiveBank),a
+      ret
+
+  3f/customTextOffsets: |
+      dw smallKeyText # 90
+      dw bossKeyText  # 91
+      dw compassText  # 92
+      dw mapText      # 93
+      dw 0
+      dw 0
+      dw 0
+      dw 0
+      dw d0Text # 98
+      dw d1Text # 99
+      dw d2Text # 9a
+      dw d3Text
+      dw d4Text
+      dw d5Text
+      dw d6Text
+      dw d7Text
+      dw d8Text
+      dw 0
+      dw 0
+      dw 0
+      dw d12Text
+      dw d0Text # Ages "maku road" is actually dungeon index 0d (13)
+
+  3f/smallKeyText: /include smallKeyText
+  3f/bossKeyText: /include bossKeyText
+  3f/compassText: /include compassText
+  3f/mapText: /include mapText
+  3f/d0Text: /include d0Text
+  3f/d1Text: /include d1Text
+  3f/d2Text: /include d2Text
+  3f/d3Text: /include d3Text
+  3f/d4Text: /include d4Text
+  3f/d5Text: /include d5Text
+  3f/d6Text: /include d6Text
+  3f/d7Text: /include d7Text
+  3f/d8Text: /include d8Text
+  3f/d12Text: /include d12Text
 
 floating:
   # replace text in script command 9a (showtextnonexitable) using
@@ -79,6 +207,7 @@ seasons:
   1c/6b54/: dw 921d # pointer to above
 
   # 3f/4fd9/: call useOwlText
+  3f/4fd9/: call useCustomText
 
 ages:
   # set text index for portal sign on crescent island.
@@ -126,3 +255,4 @@ ages:
   0c/4300/: call scriptShowTextNonExitableCustom
 
   # 3f/4faa/: call useOwlText
+  3f/4faa/: call useCustomText

@@ -9,6 +9,15 @@ common:
 floating:
   label: code
   ...
+text:
+  label: text
+  ...
+agestext:
+  label: text
+  ...
+seasonstext:
+  label: text
+  ...
 seasons:
   bank/(address/)?label: code
   ...
@@ -19,6 +28,9 @@ ages:
 
 - `common` code is used in both games.
 - `floating` code is defined but not given a bank or address.
+- `text` behaves like `floating` but is interpreted as text, similar to
+  romdata/text.yaml.
+- `agestext` and `seasonstext` define text for the respective games.
 - `seasons` and `ages` code only apply to the respective games.
 
 Any of the sections can be omitted.

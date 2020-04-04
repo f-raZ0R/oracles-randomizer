@@ -1,0 +1,204 @@
+common:
+    # Set to 01 by randomizer if keysanity is enabled
+    00/isKeysanityEnabled: db 00
+
+    # If keysanity is enabled, use "param" instead of "wDungeonIndex" for
+    # determining which dungeon's keys to increment, and set up text
+    # substitution.
+    3f/setDungeonTextSubstitution: |
+        ld a,(isKeysanityEnabled)
+        or a
+        ld a,(wDungeonIndex)
+        ret z
+
+        ld a,c
+        add a,98
+        ld (wTextSubstitutions),a
+        ld a,c
+        ret
+
+    # Returns dungeon index of compass to check for in 'a', and sound to play in
+    # 'c'.
+    01/checkCompassChimes: |
+        ld e,38
+        ld hl,checkCompassChimes_body
+        call interBankCall
+        ld a,b
+        or a
+        ret
+
+    38/checkCompassChimes_body: |
+        ld a,(wActiveGroup)
+        ld b,a
+        ld a,(wActiveRoom)
+        ld c,a
+        ld e,01
+        ld hl,compassChimeTable
+        call searchDoubleKey
+        ld b,0
+        ret nc
+
+        # If keysanity is disabled, dungeon index is based on the dungeon we're
+        # currently in, and the compass sound is default.
+        ld a,(isKeysanityEnabled)
+        or a
+        jr nz,.keysanity
+        ld c,SND_COMPASS
+        ld a,(wDungeonIndex)
+        ld b,a
+        ret
+
+        .keysanity
+        ld a,(hl)
+        cp a,0c # Check past mermaid's cave
+        ld c,da # d4 + 6
+        jr z,.gotsfx
+        add a,d4
+        ld c,a
+
+        .gotsfx
+        ld b,(hl)
+        ret
+
+seasons:
+    15/51ea/: dw smallKeyTreasureData
+    15/51ee/: dw bossKeyTreasureData
+    15/51f2/: dw compassTreasureData
+    15/51f6/: dw mapTreasureData
+
+    # All 4 of these tables are referenced in rom.go's "mutate" function to
+    # modify the text byte (the 3rd byte) if keysanity is disabled.
+    15/smallKeyTreasureData: |
+        # Indices 0-8 are dungeon-specific keys.
+        db 38,00,90,42
+        db 38,01,90,42
+        db 38,02,90,42
+        db 38,03,90,42
+        db 38,04,90,42
+        db 38,05,90,42
+        db 38,06,90,42
+        db 38,07,90,42
+        db 38,08,90,42
+
+        # 09 = special case for small keys without text. Only for non-keysanity.
+        # (originally subid 1)
+        db 28,ff,ff,42
+
+    15/bossKeyTreasureData: |
+        db 38,00,91,43
+        db 38,01,91,43
+        db 38,02,91,43
+        db 38,03,91,43
+        db 38,04,91,43
+        db 38,05,91,43
+        db 38,06,91,43
+        db 38,07,91,43
+        db 38,08,91,43
+
+    15/compassTreasureData: |
+        db 68,00,92,41
+        db 68,01,92,41
+        db 68,02,92,41
+        db 68,03,92,41
+        db 68,04,92,41
+        db 68,05,92,41
+        db 68,06,92,41
+        db 68,07,92,41
+        db 68,08,92,41
+
+    15/mapTreasureData: |
+        db 68,00,93,40
+        db 68,01,93,40
+        db 68,02,93,40
+        db 68,03,93,40
+        db 68,04,93,40
+        db 68,05,93,40
+        db 68,06,93,40
+        db 68,07,93,40
+        db 68,08,93,40
+
+    # getting small keys and boss keys
+    3f/4584/: call setDungeonTextSubstitution
+    3f/459d/: call setDungeonTextSubstitution
+
+    # compass chimes
+    01/49ea/: call checkCompassChimes; ret z; nop; nop
+    01/4a0b/: nop; nop; nop; nop; nop; nop; nop; nop; nop; nop; nop; nop; nop; ld a,c
+
+ages:
+    16/53f3/: dw smallKeyTreasureData
+    16/53f7/: dw bossKeyTreasureData
+    16/53fb/: dw compassTreasureData
+    16/53ff/: dw mapTreasureData
+
+    16/smallKeyTreasureData: |
+        db 38,0d,90,42 # 00 = maku path (but the dungeon index is actually 0d, sue me)
+        db 38,01,90,42
+        db 38,02,90,42
+        db 38,03,90,42
+        db 38,04,90,42
+        db 38,05,90,42
+        db 38,06,90,42
+        db 38,07,90,42
+        db 38,08,90,42
+
+        # 09 = special case for small keys without text. Only for non-keysanity.
+        # (originally subid 1)
+        db 28,ff,ff,42
+
+        db 00,00,00,00
+        db 00,00,00,00
+        db 38,0c,90,42 # 0c = mermaid's cave past
+
+    16/bossKeyTreasureData: |
+        db 38,00,91,43
+        db 38,01,91,43
+        db 38,02,91,43
+        db 38,03,91,43
+        db 38,04,91,43
+        db 38,05,91,43
+        db 38,06,91,43
+        db 38,07,91,43
+        db 38,08,91,43
+        db 00,00,00,00
+        db 00,00,00,00
+        db 00,00,00,00
+        db 38,0c,91,43
+
+    16/compassTreasureData: |
+        db 68,00,92,41
+        db 68,01,92,41
+        db 68,02,92,41
+        db 68,03,92,41
+        db 68,04,92,41
+        db 68,05,92,41
+        db 68,06,92,41
+        db 68,07,92,41
+        db 68,08,92,41
+        db 00,00,00,00
+        db 00,00,00,00
+        db 00,00,00,00
+        db 38,0c,92,41
+
+    16/mapTreasureData: |
+        db 68,00,93,40
+        db 68,01,93,40
+        db 68,02,93,40
+        db 68,03,93,40
+        db 68,04,93,40
+        db 68,05,93,40
+        db 68,06,93,40
+        db 68,07,93,40
+        db 68,08,93,40
+        db 00,00,00,00
+        db 00,00,00,00
+        db 00,00,00,00
+        db 38,0c,93,40
+
+    # getting small keys and boss keys
+    3f/457e/: call setDungeonTextSubstitution
+    3f/4597/: call setDungeonTextSubstitution
+
+    # compass chimes
+    01/4a5d/: call checkCompassChimes; ret z; nop; nop
+    01/4a70/: nop; nop; nop; nop; nop; nop; nop; nop; nop; nop; nop; nop; nop; ld a,c
