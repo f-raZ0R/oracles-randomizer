@@ -715,7 +715,7 @@ func optString(seed uint32, ropts randomizerOptions, flagSep string) string {
 			s += "e"
                 }
 	}
-
+}
 	return s
 }
 
