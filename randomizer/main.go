@@ -681,7 +681,6 @@ func optString(seed uint32, ropts randomizerOptions, flagSep string) string {
 			}
                         if ropts.entrance {
                                 s += "e"
-                        }
 		}
 
 		return s
@@ -711,12 +710,10 @@ func optString(seed uint32, ropts randomizerOptions, flagSep string) string {
 		}
 		if ropts.keysanity {
 			s += "k"
-
                 }
 		if ropts.entrance {
 			s += "e"
-
-		}
+                }
 	}
 
 	return s
