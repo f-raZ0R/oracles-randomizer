@@ -111,11 +111,11 @@ essences: {or: [
 maku seed: [count: [8, essences]]
 
 # yoll graveyard
-yoll graveyard: [ember seeds, or: [bomb jump 3, [bracelet, feather, or:[flute,kill switch hook]]]] # west graveyard
+yoll graveyard: [ember seeds, or: [bomb jump 3, [bracelet, feather, or: [moosh's flute, kill switch hook]]]] # west graveyard
 cheval's grave: [yoll graveyard, or: [
     kill switch hook, 
     bomb jump 3,
-    flute
+    moosh's flute
 ]]
 cheval's test: [inner under cheval grave, bracelet, or: [feather, flippers]]
 cheval's invention: [inner under cheval grave, flippers]
