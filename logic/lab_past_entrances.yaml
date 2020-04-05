@@ -49,7 +49,7 @@ inner palace: {or: [
 ]}
 inner past - maku tree cave: {or: []}
 inner past - maku tree stairs: {or: [
-    [inner past - maku tree cave, kill normal]
+    [inner past - maku tree cave, kill normal, d0 small key]
 ]}
 inner past - lynna - gba shop: {or: []}
 inner past - lynna - NW house: {or: []}
