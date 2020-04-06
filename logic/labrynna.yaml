@@ -49,7 +49,9 @@ lynna village: {or: [
     open sea past,
     [outer cheval, or: [feather, flippers]],
     outer raft guy L,
-    [outer palace M, hard, satchel, scent seeds, pegasus seeds],
+    outer palace M,
+    outer palace R,
+    outer palace L,
     [deku forest, bracelet],
 ]}
 black tower worker: [lynna village]
@@ -111,12 +113,14 @@ essences: {or: [
 maku seed: [count: [8, essences]]
 
 # yoll graveyard
-yoll graveyard: [ember seeds, or: [bomb jump 3, [bracelet, feather, or: [moosh's flute, kill switch hook]]]] # west graveyard
-cheval's grave: [yoll graveyard, or: [
-    kill switch hook, 
-    bomb jump 3,
-    moosh's flute
-]]
+yoll graveyard: {or: [  # west graveyard
+    ember seeds, # from vanilla way
+    [outer under cheval grave, or: [ # from cheval's grave
+        bomb jump 3,
+        [bracelet, feather, or: [
+            moosh's flute,
+            kill switch hook]]]]
+]}
 cheval's test: [inner under cheval grave, bracelet, or: [feather, flippers]]
 cheval's invention: [inner under cheval grave, flippers]
 grave under tree: [inner stairs near d1, ember seeds]
@@ -210,16 +214,21 @@ tokay bomb cave: [inner past - crescent - E stairs after boulder, bombs]
 wild tokay game: [inner past - crescent - E bomb cave, bracelet, farm rupees]
 # can get the warp point by swimming under crescent island, but that's pretty
 # unintuitive.
-crescent island tree: [
+crescent island plant seedling: [
     crescent past NW, 
     scent seedling, 
+    or: [ages, bracelet]
+]
+crescent island reach tree: [
+    crescent island plant seedling,
+    or: [
+        crescent present E,
+        [hard, gale satchel, outer present underwater - crescent island]]]]
+]
+crescent island tree: [
+    crescent island reach tree,
     seed item,
     or: [sword, punch object],
-    or: [
-        ages, 
-        [bracelet, or: [
-            or: [echoes, crescent present E], 
-            [hard, gale satchel, outer present underwater - crescent island]]]]
 ]
 d3 entrance: [crescent present W]
 hidden tokay cave: [inner past - crescent - iron shield cave, flippers]
@@ -346,7 +355,7 @@ goron diamond cave: [inner present - mid goron - leftmost cave,
 ridge bush cave: [inner past - mid goron - SW of bomb cave, switch hook]
 
 # zora village / zora seas. only accessible with tune of ages, so no
-# distinctions between past and present are necessary.
+# distinctions between past and present are necessary. If only entrance was that simple.
 # zora village: [mermaid suit, ages, switch hook]
 zora village tree: [
     seed item,
