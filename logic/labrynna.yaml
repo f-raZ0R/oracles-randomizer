@@ -228,12 +228,12 @@ crescent island reach tree: [
     crescent island plant seedling,
     or: [
         crescent present E,
-        [hard, gale satchel, outer present underwater - crescent island]]]]
+        [hard, gale satchel, outer present underwater - crescent island]]
 ]
 crescent island tree: [
     crescent island reach tree,
     seed item,
-    or: [sword, punch object],
+    or: [sword, punch object]
 ]
 d3 entrance: [crescent present W]
 hidden tokay cave: [inner past - crescent - iron shield cave, flippers]
