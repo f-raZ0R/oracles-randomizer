@@ -244,9 +244,9 @@ goron mountain: {or: [
 ]}
 chest in goron mountain: [inner goron cave near old man, bombs, bomb jump 3]
 
-# tarm ruins
-tarm ruins: [north swamp,
-    square jewel, pyramid jewel, round jewel, x-shaped jewel]
+# tarm ruins. Please help me I want to add logic for this for entrance but this is a mess i'm going insane
+tarm ruins: or: [[north swamp,
+    square jewel, pyramid jewel, round jewel, x-shaped jewel], [outer tarm deku, autumn, break mushroom]]
 lost woods: [tarm ruins, break mushroom, winter, autumn, spring, summer]
 tarm ruins tree: [lost woods, seed item, harvest tree]
 d6 entrance: [lost woods, break flower safe,

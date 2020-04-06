@@ -1,4 +1,4 @@
-# horon village
+﻿# horon village
 outer know-it-all: {or: [horon village]}
 outer mayors house: {or: [horon village]}
 outer clock shop: {or: [horon village]}
@@ -297,7 +297,7 @@ inner cave below goron mountain area: {or: [
 ]}
 inner under biggoron: {or: [[inner goron cave near old man, feather]]}
 
-# tarm ruins
+# tarm ruins...what is this madness... what... what is this madness? no, I'm not touching this right now, I barely understand any of this... it seems like so much is missing... eh, this is somebody else's problem...
 outer tarm deku: {or: [[
     tarm ruins,
     or: [
