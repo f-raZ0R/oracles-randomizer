@@ -47,7 +47,7 @@ inner palace: {or: [
     inner palace R, 
     [mermaid suit, inner stairs SE of palace]
 ]}
-inner past - maku tree cave: {or: []}
+inner past - maku tree cave: {or: [[inner past - maku tree stairs, kill normal, d0 small key]]}
 inner past - maku tree stairs: {or: [
     [inner past - maku tree cave, kill normal, d0 small key]
 ]}
