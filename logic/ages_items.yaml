@@ -1,4 +1,4 @@
-shield: {or: [wooden shield, iron shield]}
+shield: {or: [wooden shield, iron shield, [scent seeds, inner past - crescent - shop]]}
 
 bombs: {or: [
     ["bombs, 10", or: [bracelet, break pot, flute, shovel]],
