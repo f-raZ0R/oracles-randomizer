@@ -5,88 +5,21 @@
 #   connector: true
 
 # horon village
-know-it-all:
-  entry: 0x13605
-  exit: 0x13809
-  maptile: 0xc5
-  ismultiwarp: true
-gba shop:
-  entry: 0x13609
-  exit: 0x1389d
-  maptile: 0xc5
-  ismultiwarp: true
-mayors house:
-  entry: 0x134a5
-  exit: 0x1380d
-  roomtile: 0x44
-clock shop:
-  entry: 0x135e5
-  exit: 0x13805
-  maptile: 0xd7
-  ismultiwarp: true
 stairs behind clock shop:
   entry: 0x135e9
   exit: 0x13c49
   maptile: 0xd7
   ismultiwarp: true
-  oneway: true
-horon shop:
-  entry: 0x134d9
-  exit: 0x1387d
-  roomtile: 0x45
-ring shop:
-  entry: 0x134ad
-  exit: 0x13829
-  roomtile: 0x45
-baby house - L entrance:
-  entry: 0x13625
-  exit: 0x1382d
-  maptile: 0xf6
-  ismultiwarp: true
-  connector: true
-baby house - R entrance:
-  entry: 0x13629
-  exit: 0x13831
-  maptile: 0xf6
-  ismultiwarp: true
-  connector: true
+  oneway: false
 horon stairs into portal:
   entry: 0x134e1
   exit: 0x13901
   roomtile: 0x33
   connector: true
-SE horon vill house - main entrance:
-  entry: 0x13631
-  exit: 0x13875
-  maptile: 0xf9
-  ismultiwarp: true
-  connector: true
-SE horon vill house - side entrance:
-  entry: 0x13635
-  exit: 0x13879
-  maptile: 0xf9
-  ismultiwarp: true
-  connector: true
-  trapped: true
+member's shop stairs:
+
 
 # western coast
-west coast house - main entrance:
-  entry: 0x13645
-  exit: 0x13811
-  maptile: 0xd2
-  ismultiwarp: true
-  connector: true
-west coast house - side entrance:
-  entry: 0x13649
-  exit: 0x13815
-  maptile: 0xd2
-  ismultiwarp: true
-  connector: true
-  trapped: true
-fairy cave near hero's cave:
-  entry: 0x1359d
-  exit: 0x13a59
-  roomtile: 0x06
 SW graveyard:
   entry: 0x135d9
   exit: 0x138d5
