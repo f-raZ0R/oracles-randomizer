@@ -122,7 +122,8 @@ yoll graveyard: {or: [  # west graveyard
 ]}
 cheval's grave: [yoll graveyard, or: [
     kill switch hook, 
-    bomb jump 3
+    bomb jump 3,
+    moosh's flute
 ]]
 cheval's test: [inner under cheval grave, bracelet, or: [feather, flippers]]
 cheval's invention: [inner under cheval grave, flippers]
