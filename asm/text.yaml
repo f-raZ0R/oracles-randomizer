@@ -95,9 +95,13 @@ ages:
       ld bc,da00 # Present Crescent Island SW
       call compareRoom
       .endComparison
-      ld bc,0901
-      ret nz
       ld bc,5601
+      ret z
+      ld bc,0b01 # Present Crescent Island SW
+      call compareRoom
+      ld bc,0942  # Tune of Echoes item description
+      ret z
+      ld bc,0901
       ret
   06/40e7/: call setSignTextIndex
 
