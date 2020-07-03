@@ -12,11 +12,10 @@ for a list of things that are out of logic even in hard.
 - Get scent seeds from the plants in D3.
 - Get bombs from Head Thwomp or Goron Shooting Gallery (200-299 points).
 - Get a random potion from Maple instead of buying one from Syrup.
-- Use bomb boosts to increase jump distance. Drop a bomb near the gap you're
+- Use bomb boosts to increase jump distance. Pull a bomb near the gap you're
   jumping, move slightly closer to the gap, and jump in the desired direction
-  as the bomb explodes and hits you. Buffering the simultaneous jump +
-  directional input by holding the relevant buttons while closing a menu makes
-  the trick easier.
+  as the bomb explodes. Buffering the simultaneous jump + directional input by
+  holding the relevant buttons while closing a menu makes the trick easier.
 
   I think the only relevant strictly horizontal or vertical bomb jump is across
   the water channels in past Rolling Ridge Base.
@@ -32,6 +31,11 @@ for a list of things that are out of logic even in hard.
   [[Video]](https://streamable.com/qowrs)
 - Hit the switch in the cave under Tingle using a bomb/seed jump + boomerang.
   [[Video]](https://streamable.com/ly1vn)
+- Hit the switch in the cave under Tingle using the seed shooter, coming from
+  the stairs. The position is subpixel-dependent, so run around diagonally a
+  bit if you're on the correct pixel and the seed is breaking on one of the
+  green tiles.
+  [[Image]](https://cdn.discordapp.com/attachments/523574765160628245/692422509236060200/unknown.png)
 - Reach the Crescent Island seed tree by visiting the map tile underwater, then
   warping to it with gale seeds. [[Video]](https://streamable.com/4bwyq)
 
@@ -97,6 +101,9 @@ for a list of things that are out of logic even in hard.
   then mid pitch. [[Video]](https://streamable.com/guma6)
 - Walk diagonally across the corners of pits in the D6 present cube puzzle. [No
   video.]
+- Use feather + sword to traverse the D6 present room with the switch that
+  changes the floor tile pattern.
+  [[Video]](https://clips.twitch.tv/CrunchyBlushingHummingbirdMingLee)
 
 ## Not in logic because you could softlock but still cool
 
@@ -104,3 +111,4 @@ for a list of things that are out of logic even in hard.
   Octorok. Clipping slightly into the fence tiles makes it slightly easier,
   using scent seeds to attract the Octorok makes it faster.
   [[Video]](https://streamable.com/3r6uv)
+- Get scent seeds from D7 miniboss.

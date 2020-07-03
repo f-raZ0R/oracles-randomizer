@@ -9,16 +9,16 @@ starting chest: [start]
 nayru's house: [start]
 
 # lynna / south shore / palace
-lynna city: {or: [break bush, flute, echoes]}
+lynna city: {or: [break bush, flute, echoes, [shore present, mermaid suit]]}
 lynna village: {or: [lynna city, echoes]}
 black tower worker: [lynna village]
-maku tree: {or: [rescue nayru, [lynna village, shovel, kill normal]]}
+maku tree: {or: [rescue nayru, [maku path basement, kill normal]]}
 south lynna tree: [lynna city, seed item,
     or: [sword, punch object, dimitri's flute, [hard, break bush]]]
 lynna city chest: {or: [ember seeds, currents]}
 shore present: {or: [flute, ricky's gloves, [break bush, feather],
-    [lynna city, bracelet], [currents, or: [feather, flippers, raft]],
-    [ages, break bush], [lynna city, mermaid suit]]}
+    [ages, break bush], [lynna city, {or: [bracelet, mermaid suit]}],
+    [currents, or: [feather, flippers, raft, [hard, seed shooter]]]]}
 south shore dirt: [shore present, or: [shovel, flute]]
 balloon guy: [feather, or: [sword, boomerang],
     or: [currents, ricky's gloves, ricky's flute,
@@ -38,7 +38,7 @@ ambi's palace chest: [lynna village, or: [ages,
 rescue nayru: [ambi's palace chest, mystery seeds, switch hook,
     or: [sword, punch enemy]]
 mayor plen's house: [long hook]
-maku seed: [
+maku seed: [maku tree,
     d1 boss, d2 boss, d3 boss, d4 boss, d5 boss, d6 boss, d7 boss, d8 boss]
 
 # yoll graveyard
@@ -67,8 +67,7 @@ deku forest cave east: [deku forest]
 deku forest cave west: [deku forest, bracelet,
     or: [feather, switch hook, ember seeds, ages, gale satchel]]
 deku forest tree: [deku forest, or: [sword, punch object], seed item,
-    or: [ember seeds, ages, switch hook, gale satchel,
-        [hard, feather, or: [sword, bombs]]]]
+    or: [ember seeds, ages, switch hook, gale satchel, feather]]
 deku forest owl: [mystery seeds, deku forest tree]
 deku forest soldier: [deku forest, mystery seeds]
 d2 entrance: [deku forest, or: [bombs, currents]]

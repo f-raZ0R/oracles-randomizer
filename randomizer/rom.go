@@ -74,19 +74,23 @@ func makeRomChecksum(data []byte) [2]byte {
 
 type romState struct {
 	game         int
+	player       int
 	data         []byte // actual contents of the file
 	treasures    map[string]*treasure
 	itemSlots    map[string]*itemSlot
 	codeMutables map[string]*mutableRange
 	bankEnds     []uint16 // bus offset of free space in each bank
 	assembler    *assembler
+	includes     []string // filenames
 }
 
-func newRomState(data []byte, game int) *romState {
+func newRomState(data []byte, game, player int, includes []string) *romState {
 	rom := &romState{
 		game:      game,
+		player:    player,
 		data:      data,
 		treasures: loadTreasures(data, game),
+		includes:  includes,
 	}
 	rom.itemSlots = rom.loadSlots()
 	rom.initBanks()
@@ -96,7 +100,7 @@ func newRomState(data []byte, game int) *romState {
 // changes the contents of loaded ROM bytes in place. returns a checksum of the
 // result or an error.
 func (rom *romState) mutate(warpMap map[string]string, seed uint32,
-	ropts randomizerOptions) ([]byte, error) {
+	ropts *randomizerOptions) ([]byte, error) {
 	// need to set this *before* treasure map data
 	if len(warpMap) != 0 {
 		rom.setWarps(warpMap, ropts.dungeons)
@@ -144,10 +148,11 @@ func (rom *romState) mutate(warpMap map[string]string, seed uint32,
 	rom.setRoomTreasureData()
 	rom.setFileSelectText(optString(seed, ropts, "+"))
 	rom.attachText()
+	rom.codeMutables["multiPlayerNumber"].new[0] = byte(rom.player)
 
 	// regenerate collect mode table to accommodate changes based on contents.
-	rom.codeMutables["collectModeTable"].new =
-		[]byte(makeCollectModeTable(rom.itemSlots))
+	rom.codeMutables["collectPropertiesTable"].new =
+		[]byte(makeCollectPropertiesTable(rom.itemSlots))
 
 	// set the text IDs for all rings to $ff (blank), since custom code deals
 	// with text
@@ -157,13 +162,9 @@ func (rom *romState) mutate(warpMap map[string]string, seed uint32,
 		}
 	}
 
-	var err error
 	mutables := rom.getAllMutables()
 	for _, k := range orderedKeys(mutables) {
-		err = mutables[k].mutate(rom.data)
-		if err != nil {
-			return nil, err
-		}
+		mutables[k].mutate(rom.data)
 	}
 
 	// explicitly set these items after their functions are written
@@ -194,6 +195,9 @@ func (rom *romState) mutate(warpMap map[string]string, seed uint32,
 	rom.setCompassData()
 	rom.setLinkedData()
 
+	// do this last; includes have precendence over everything else
+	rom.addIncludes()
+
 	sum := makeRomChecksum(rom.data)
 	rom.data[0x14e] = sum[0]
 	rom.data[0x14f] = sum[1]
@@ -212,13 +216,13 @@ func (rom *romState) verify() []error {
 		// seasons shop items
 		case "zero shop text", "member's card", "treasure map",
 			"rare peach stone", "ribbon":
-		// seasons flutes
-		case "dimitri's flute", "moosh's flute":
+		// flutes
+		case "ricky's flute", "dimitri's flute", "moosh's flute":
 		// seasons linked chests
 		case "spool swamp cave", "woods of winter, 2nd cave",
 			"dry eyeglass lake, west cave":
 		// seasons misc.
-		case "temple of seasons", "fool's ore", "blaino prize",
+		case "bracelet", "temple of seasons", "fool's ore", "blaino prize",
 			"mt. cucco, platform cave", "diving spot outside D4":
 		// ages progressive w/ different item IDs
 		case "nayru's house", "tokkey's composition", "rescue nayru",
@@ -343,9 +347,13 @@ func setTreeNybble(subid *mutableRange, slot *itemSlot) {
 // set the locations of the sparkles for the jewels on the treasure map.
 func (rom *romState) setTreasureMapData() {
 	for _, name := range []string{"round", "pyramid", "square", "x-shaped"} {
-		label := strings.ReplaceAll(name, "-s", "S") + "JewelCoords" // lol
-		slot := rom.lookupItemSlot(name + " jewel")
-		rom.codeMutables[label].new[0] = slot.mapTile
+		label := strings.ReplaceAll(name, "-s", "S") + "JewelCoords"
+		rom.codeMutables[label].new[0] = 0x63 // default to tarm gate
+		for _, slot := range rom.lookupAllItemSlots(name + " jewel") {
+			if int(slot.player) == 0 || int(slot.player) == rom.player {
+				rom.codeMutables[label].new[0] = slot.mapTile
+			}
+		}
 	}
 }
 

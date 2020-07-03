@@ -16,11 +16,10 @@ for a list of things that are out of logic even in hard.
 	- Ember seeds from the plants in the first Poe Sister's room in D7
 	- Mystery seeds from Frypolar's room in D8
 - Get bombs from the plants in D2.
-- Use bomb boosts to increase jump distance. Drop a bomb near the gap you're
+- Use bomb boosts to increase jump distance. Pull a bomb near the gap you're
   jumping, move slightly closer to the gap, and jump in the desired direction
-  as the bomb explodes and hits you. Buffering the simultaneous jump +
-  directional input by holding the relevant buttons while closing a menu makes
-  the trick easier.
+  as the bomb explodes. Buffering the simultaneous jump + directional input by
+  holding the relevant buttons while closing a menu makes the trick easier.
 
   Strictly horizontal and vertical bomb jumps include:
 	- Lava between Mt. Cucco portal and Subrosia Market
@@ -65,10 +64,11 @@ for a list of things that are out of logic even in hard.
   reach the stump. In the second room, only move diagonally for a moment, then
   hold right. To get back, reenter and walk straight up.
   [[Video]](https://streamable.com/1occ3)
-- Bomb jump capeless to the button before the D7 miniboss.
-  [[Video]](https://clips.twitch.tv/CloudyGoodReubenOneHand)
 - Access the western stump in Temple Remains without autumn, using seeds +
   cape. [[Video]](https://streamable.com/6u65g)
+- Hit the lever in the floodgate keeper's house by throwing a pot. The
+  horizontal position of the throw is precise.
+  [[Video]](https://clips.twitch.tv/ExpensiveAbnegateMoonFUNgineer)
 
 ## Subrosia
 
@@ -81,6 +81,9 @@ for a list of things that are out of logic even in hard.
   [[Video]](https://streamable.com/798g1)
 - Throw pots in D2 to access the vanilla bracelet chest and blade trap room.
   [[Video]](https://streamable.com/tp6cz)
+- Hit minecart levers in D4 by dropping pots while passing by. This works for
+  both 1F minecarts.
+  [[Video]](https://clips.twitch.tv/LaconicYawningPresidentFUNgineer)
 - Pegasus + feather jump to reach the left chest in D5 (no bomb boost
   required). [[Video]](https://clips.twitch.tv/CredulousTemperedMulePicoMause)
 - Bomb + feather jump across the water to get to the minecarts in D5.
@@ -89,14 +92,19 @@ for a list of things that are out of logic even in hard.
   [[Video]](https://streamable.com/pxe10)
 - Jump through the "wall" of fire traps in D5.
   [[Video]](https://streamable.com/yxrae)
+- Corner-walk around the first crystal in D6, or just run through the blade
+  traps, obviating feather or a means to break the crystal.
 - Poe skip: skip fighting the first Poe in D7.
   [[Video]](https://streamable.com/ztzsh)
+- Bomb jump capeless to the button before the D7 miniboss.
+  [[Video]](https://clips.twitch.tv/CloudyGoodReubenOneHand)
 - Hit the three buttons in D7 in the correct order without pegasus seeds, by
   jumping on the edges of the tiles.
   [[Video]](https://streamable.com/q7gnh)
 - Hit the first eye statue in D8 with seeds + feather + satchel.
   [[Video]](https://streamable.com/jle4o)
-- Hit sets of three eye statues in D8 with feather + satchel instead of HSS.
+- Hit sets of three eye statues in D8 with feather + satchel/slingshot instead
+  of HSS. Only ember and scent seeds are in logic with the slingshot.
   [[Video]](https://streamable.com/k0hj5)
 - Activate the D8 bridge switch without L-2 boomerang or seeds + cape.
   [[Video]](https://streamable.com/jtpr6)

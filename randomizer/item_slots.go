@@ -8,22 +8,23 @@ import (
 
 // an item slot (chest, gift, etc). it references room data and treasure data.
 type itemSlot struct {
-	treasure                 *treasure
-	idAddrs, subidAddrs      []address
-	group, room, collectMode byte
-	moreRooms                []uint16 // high = group, low = room
-	mapTile                  byte     // overworld map coords, yx
+	treasure                         *treasure
+	idAddrs, subidAddrs              []address
+	group, room, collectMode, player byte
+	moreRooms                        []uint16 // high = group, low = room
+	mapTile                          byte     // overworld map coords, yx
+	localOnly                        bool     // multiworld
 }
 
 // implementes `mutate` from the `mutable` interface.
-func (mut *itemSlot) mutate(b []byte) error {
+func (mut *itemSlot) mutate(b []byte) {
 	for _, addr := range mut.idAddrs {
 		b[addr.fullOffset()] = mut.treasure.id
 	}
 	for _, addr := range mut.subidAddrs {
 		b[addr.fullOffset()] = mut.treasure.subid
 	}
-	return mut.treasure.mutate(b)
+	mut.treasure.mutate(b)
 }
 
 // helper function for itemSlot.check()
@@ -74,6 +75,8 @@ type rawSlot struct {
 
 	// optional additional rooms
 	MoreRooms []uint16
+
+	Local bool // dummy implies true
 }
 
 // like address, but has exported fields for loading from yaml.
@@ -116,6 +119,7 @@ func (rom *romState) loadSlots() map[string]*itemSlot {
 			group:     byte(raw.Room >> 8),
 			room:      byte(raw.Room),
 			moreRooms: raw.MoreRooms,
+			localOnly: raw.Local || raw.Dummy,
 		}
 
 		// unspecified map tile = assume overworld
