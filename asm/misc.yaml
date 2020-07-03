@@ -23,8 +23,15 @@ seasons:
   # normal dungeon room properties.
   01/4a09/: nop; nop
   
-# always take double damage via cursed ring
+# OHKO
   06/464a/: |
+   add a,a
+   add a,a
+   add a,a
+   add a,a
+   add a,a
+   add a,a
+   add a,a
    add a,a
   
   06/4667/: |
@@ -276,8 +283,15 @@ ages:
   07/623c/: |
       sra a
 
-# always take double damage via cursed ring
+# OHKO
   06/466b/: |
+   add a,a
+   add a,a
+   add a,a
+   add a,a
+   add a,a
+   add a,a
+   add a,a
    add a,a
   
   06/4688/: |
