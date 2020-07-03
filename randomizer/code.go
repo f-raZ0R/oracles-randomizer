@@ -27,16 +27,18 @@ type asmData struct {
 // bank, the EOB point is moved to the end of the replacement. if the bank
 // offset of `addr` is zero, the replacement will start at the existing EOB
 // point.
-func (rom *romState) replaceAsm(addr address, label, asm string) {
+//
+// returns the final label of the replacement.
+func (rom *romState) replaceAsm(addr address, label, asm string) string {
 	if data, err := rom.assembler.compile(asm); err == nil {
-		rom.replaceRaw(addr, label, data)
+		return rom.replaceRaw(addr, label, data)
 	} else {
 		panic(fmt.Sprintf("assembler error in %s:\n%v\n", label, err))
 	}
 }
 
 // as replaceAsm, but interprets the data as a literal byte string.
-func (rom *romState) replaceRaw(addr address, label, data string) {
+func (rom *romState) replaceRaw(addr address, label, data string) string {
 	if addr.offset == 0 {
 		addr.offset = rom.bankEnds[addr.bank]
 	}
@@ -49,7 +51,7 @@ func (rom *romState) replaceRaw(addr address, label, data string) {
 
 	end := addr.offset + uint16(len(data))
 	if end > rom.bankEnds[addr.bank] {
-		if end > 0x8000 {
+		if end > 0x8000 || (end > 0x4000 && addr.bank == 0) {
 			panic(fmt.Sprintf("not enough space for %s in bank %02x",
 				label, addr.bank))
 		}
@@ -61,14 +63,15 @@ func (rom *romState) replaceRaw(addr address, label, data string) {
 		new:  []byte(data),
 	}
 	rom.assembler.define(label, addr.offset)
+
+	return label
 }
 
-// returns a byte table of (group, room, collect mode) entries for randomized
-// items. a mode >7f means to use &7f as an index to a jump table for special
-// cases.
-func makeCollectModeTable(itemSlots map[string]*itemSlot) string {
+// returns a byte table of (group, room, collect mode, player) entries for
+// randomized items. a mode >7f means to use &7f as an index to a jump table
+// for special cases.
+func makeCollectPropertiesTable(itemSlots map[string]*itemSlot) string {
 	b := new(strings.Builder)
-
 	for _, key := range orderedKeys(itemSlots) {
 		slot := itemSlots[key]
 
@@ -78,12 +81,12 @@ func makeCollectModeTable(itemSlots map[string]*itemSlot) string {
 			mode &= 0xf8
 		}
 
-		if _, err := b.Write([]byte{slot.group, slot.room, mode}); err != nil {
+		if _, err := b.Write([]byte{slot.group, slot.room, mode, slot.player}); err != nil {
 			panic(err)
 		}
 		for _, groupRoom := range slot.moreRooms {
 			group, room := byte(groupRoom>>8), byte(groupRoom)
-			if _, err := b.Write([]byte{group, room, mode}); err != nil {
+			if _, err := b.Write([]byte{group, room, mode, slot.player}); err != nil {
 				panic(err)
 			}
 		}
@@ -135,7 +138,8 @@ type eobThing struct {
 }
 
 // applies the labels and EOB declarations in the asm data sets.
-func (rom *romState) applyAsmData(asmFiles []*asmData) {
+// returns a slice of added labels.
+func (rom *romState) applyAsmData(asmFiles []*asmData) []string {
 	// preprocess map slices (keys = labels, values = asm blocks)
 	slices := make([]yaml.MapSlice, 0)
 	for _, asmFile := range asmFiles {
@@ -215,9 +219,12 @@ func (rom *romState) applyAsmData(asmFiles []*asmData) {
 	// reset EOB boundaries
 	copy(rom.bankEnds, originalBankEnds)
 
+	labels := make([]string, 0, 3000) // 3000 probably still fine
+
 	// rewrite EOB asm, using real addresses for labels
 	for _, thing := range allEobThings {
-		rom.replaceAsm(thing.addr, thing.label, thing.thing)
+		labels = append(labels,
+			rom.replaceAsm(thing.addr, thing.label, thing.thing))
 	}
 
 	// make non-EOB asm replacements
@@ -225,15 +232,19 @@ func (rom *romState) applyAsmData(asmFiles []*asmData) {
 		for _, item := range slice {
 			k, v := item.Key.(string), item.Value.(string)
 			if addr, label := parseMetalabel(k); addr.offset != 0 {
-				rom.replaceAsm(addr, label, v)
+				labels = append(labels, rom.replaceAsm(addr, label, v))
 			}
 		}
 	}
+
+	return labels
 }
 
 // applies the labels and EOB declarations in the given asm data files.
 func (rom *romState) applyAsmFiles(infos []os.FileInfo) {
 	asmFiles := make([]*asmData, len(infos))
+
+	// standard files are embedded
 	for i, info := range infos {
 		asmFiles[i] = new(asmData)
 		asmFiles[i].filename = info.Name()
@@ -249,6 +260,7 @@ func (rom *romState) applyAsmFiles(infos []os.FileInfo) {
 			panic(err)
 		}
 	}
+
 	rom.applyAsmData(asmFiles)
 }
 
@@ -390,8 +402,8 @@ func (rom *romState) initBanks() {
 	// with the number of checks.
 	roomTreasureBank := byte(sora(rom.game, 0x3f, 0x38).(int))
 	numOwlIds := sora(rom.game, 0x1e, 0x14).(int)
-	rom.replaceRaw(address{0x06, 0}, "collectModeTable",
-		makeCollectModeTable(rom.itemSlots))
+	rom.replaceRaw(address{0x06, 0}, "collectPropertiesTable",
+		makeCollectPropertiesTable(rom.itemSlots))
 	rom.replaceRaw(address{roomTreasureBank, 0}, "roomTreasures",
 		makeRoomTreasureTable(rom.game, rom.itemSlots))
 	rom.replaceRaw(address{0x3f, 0}, "owlTextOffsets",
@@ -406,5 +418,36 @@ func (rom *romState) initBanks() {
 	if err != nil {
 		panic(err)
 	}
+
 	rom.applyAsmFiles(fi)
+}
+
+// apply user-included asm files.
+func (rom *romState) addIncludes() error {
+	asmFiles := make([]*asmData, len(rom.includes))
+
+	// read from filesystem
+	for i, path := range rom.includes {
+		asmFiles[i] = new(asmData)
+		asmFiles[i].filename = path
+
+		f, err := os.Open(path)
+		if err != nil {
+			return err
+		}
+		defer f.Close()
+
+		if err := yaml.NewDecoder(f).Decode(asmFiles[i]); err != nil {
+			return err
+		}
+	}
+
+	// apply immediately
+	labels := rom.applyAsmData(asmFiles)
+	sort.Strings(labels)
+	for _, label := range labels {
+		rom.codeMutables[label].mutate(rom.data)
+	}
+
+	return nil
 }

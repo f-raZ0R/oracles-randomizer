@@ -6,8 +6,8 @@ import (
 
 // an instance of ROM data that can be changed by the randomizer.
 type mutable interface {
-	mutate([]byte) error // change ROM bytes
-	check([]byte) error  // verify that the mutable matches the ROM
+	mutate([]byte)      // change ROM bytes
+	check([]byte) error // verify that the mutable matches the ROM
 }
 
 // a length of mutable bytes starting at a given address.
@@ -17,12 +17,11 @@ type mutableRange struct {
 }
 
 // implements `mutate()` from the `mutable` interface.
-func (mut *mutableRange) mutate(b []byte) error {
+func (mut *mutableRange) mutate(b []byte) {
 	offset := mut.addr.fullOffset()
 	for i, value := range mut.new {
 		b[offset+i] = value
 	}
-	return nil
 }
 
 // implements `check()` from the `mutable` interface.
@@ -43,13 +42,10 @@ func (rom *romState) setTreewarp(treewarp bool) {
 	mut.new[5] = byte(ternary(treewarp, 0x28, 0x18).(int)) // jr z / jr
 }
 
-// sets the flute type and natzu region type based on a companion number 1 to
-// 3.
+// sets the natzu region based on a companion number 1 to 3.
 func (rom *romState) setAnimal(companion int) {
 	rom.codeMutables["romAnimalRegion"].new =
 		[]byte{byte(companion + 0x0a)}
-	rom.codeMutables["flutePalette"].new =
-		[]byte{byte(0x10*(4-companion) + 3)}
 }
 
 // key = area name (as in asm/vars.yaml), id = season index (spring -> winter).
@@ -57,20 +53,16 @@ func (rom *romState) setSeason(key string, id byte) {
 	rom.codeMutables[key].new[0] = id
 }
 
-// get a collated map of all mutables, *except* for treasures which do not
-// appear in the seed. this allows things like the three seasons flutes having
-// different data but the same address.
+// get a collated map of all mutables.
 func (rom *romState) getAllMutables() map[string]mutable {
 	allMutables := make(map[string]mutable)
 	for k, v := range rom.itemSlots {
 		if v.treasure == nil {
 			panic(fmt.Sprintf("treasure for %s is nil", k))
 		}
-		if v.treasure.addr.offset != 0 {
-			// treasures are allowed to have duplicates
-			tName, _ := reverseLookup(rom.treasures, v.treasure)
-			allMutables[tName.(string)] = v.treasure
-		}
+		addMutOrPanic(allMutables, k, v)
+	}
+	for k, v := range rom.treasures {
 		addMutOrPanic(allMutables, k, v)
 	}
 	for k, v := range rom.codeMutables {
